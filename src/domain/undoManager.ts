@@ -1,6 +1,6 @@
-import messageHandler from '../../infrastructure/messageHandler'
-import { Queue } from '../../infrastructure/queue'
-import { getInstance } from '../../infrastructure/singleton/singleton'
+import messageHandler from '@/infrastructure/messageHandler'
+import { Queue } from '@/infrastructure/queue'
+import { getInstance } from '@/infrastructure/singleton/singleton'
 
 const maxStep = 20
 

@@ -5,9 +5,9 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/matting',
-      name: 'matting',
-      component: () => import('../views/Matting.vue')
+      path: '/ps',
+      name: 'ps',
+      component: () => import('../views/PS.vue')
     },
     {
       path: '/',
