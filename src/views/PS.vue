@@ -9,6 +9,7 @@
 import { Container } from '@/domain/container'
 import { onMounted, ref } from 'vue'
 import Toolbar from '@/application/Toolbar.vue'
+import undo from '@assets/icons/undo.svg'
 
 const matting = ref<HTMLDivElement>()
 

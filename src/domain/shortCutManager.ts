@@ -1,4 +1,4 @@
-import { getInstance } from '@/infrastructure/singleton/singleton'
+import { getInstance } from '@/infrastructure/singleton'
 
 class ShortCutManager {
   private _dom
