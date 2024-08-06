@@ -2,7 +2,25 @@ class MessageHandler {
   private _eventMap: Map<string, MessageHandlerItem[]> = new Map()
   private _messageMap: Map<string, MessageHandlerItem[]> = new Map()
 
-  constructor() {}
+  constructor() {
+    window.addEventListener('message', this.onMessage.bind(this))
+  }
+
+  private exec(key: string, data: any, isMessage: boolean = false) {
+    const map = isMessage ? this._messageMap : this._eventMap
+    const callbacks = map.get(key) || []
+    callbacks.forEach((item) => {
+      item.callback(data)
+      if (item.once) {
+        this.off(key, item.callback, isMessage)
+      }
+    })
+  }
+
+  private onMessage({ data }: MessageEvent<any>) {
+    const { type, params } = data
+    this.exec(type, params, true)
+  }
 
   on(key: string, callback: Function, isMessage: boolean = false) {
     const map = isMessage ? this._messageMap : this._eventMap
@@ -29,5 +47,20 @@ class MessageHandler {
     }
   }
 
-  exec(key: string, data?: any) {}
+  emit(key: string, data?: any, isMessage: boolean = false) {
+    if (isMessage) {
+      window.parent && window.parent.postMessage({ type: key, params: data }, '*')
+      window.postMessage({ type: key, params: data })
+    } else {
+      this.exec(key, data)
+    }
+  }
+
+  destroy() {
+    window.removeEventListener('message', this.onMessage.bind(this))
+  }
 }
+
+const messageHandler = new MessageHandler()
+
+export default messageHandler
