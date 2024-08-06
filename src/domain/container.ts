@@ -10,8 +10,8 @@ export class Container {
   private _operateManage: ReturnType<typeof getUndoManager>
   private _shortCutManage: ReturnType<typeof getShortCutManager>
 
-  constructor(dom: HTMLDivElement) {
-    this._id = Math.random().toString(36).substr(2, 9)
+  constructor(dom: HTMLDivElement, id: string) {
+    this._id = id
     dom.className = `${dom.className} ps-container`
     this._dom = dom
     this.setLayout('lr')
