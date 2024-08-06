@@ -1,9 +1,15 @@
 <template>
-  <div><input type="file" @change="handleFileChange" /></div>
+  <div ref="matting"></div>
 </template>
 
 <script lang="ts" setup>
-const handleFileChange = (event: any) => {}
+import { onMounted, ref } from 'vue'
+
+const matting = ref<HTMLDivElement>()
+
+onMounted(() => {
+  console.log(matting.value)
+})
 </script>
 
 <style lang="less" scoped></style>

@@ -3,7 +3,20 @@ import Matting from '../components/Matting/Matting.vue'
 </script>
 
 <template>
-  <main>
+  <div class="matting-box">
     <Matting />
-  </main>
+  </div>
 </template>
+
+<style scoped lang="less">
+.matting-box {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  overflow: hidden;
+
+  & > * {
+    width: 100%;
+  }
+}
+</style>
