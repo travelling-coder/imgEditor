@@ -9,6 +9,11 @@
   --active-color: #045e96;
   --active-background-color: #1678b422;
   --active-border-color: #75b6df;
+
+  --background-shape-size: 40px;
+  --half-background-shape-size: 20px;
+
+  --background-color: #f2f2f2;
 }
 
 /* semantic color variables for this project */

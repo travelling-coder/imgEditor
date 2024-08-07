@@ -4,4 +4,5 @@ interface ToolbarOptions {
   type: ToolbarType
   icon: string
   title: string
+  unActiveAble?: boolean
 }

@@ -5,6 +5,7 @@ export class Canvas {
   private _ctx: CanvasRenderingContext2D
 
   constructor(dom: HTMLDivElement) {
+    dom.classList.add('ps-canvas-container')
     this._dom = dom
     this._canvas = document.createElement('canvas')
     this._ctx = this._canvas.getContext('2d')!

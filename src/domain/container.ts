@@ -1,6 +1,9 @@
 import { Canvas } from './canvas'
 import getShortCutManager from './shortCutManager'
 import getUndoManager from './undoManager'
+import getToolBar from './toolbar'
+import getZoom from './zoom'
+import { createDiv } from '@/infrastructure/createDom'
 
 export class Container {
   private _dom: HTMLDivElement
@@ -9,26 +12,37 @@ export class Container {
   private _id: string
   private _operateManage: ReturnType<typeof getUndoManager>
   private _shortCutManage: ReturnType<typeof getShortCutManager>
+  private _toolbar: ReturnType<typeof getToolBar>
+  private _zoom: ReturnType<typeof getZoom>
 
   constructor(dom: HTMLDivElement, id: string) {
     this._id = id
     dom.className = `${dom.className} ps-container`
     this._dom = dom
     this.setLayout('lr')
-    const preview = this._createDom()
+    const preview = this._createDom('ps-preview-canvas')
     this._preview = new Canvas(preview)
-    const operate = this._createDom()
+    const operate = this._createDom('ps-operate-canvas')
     this._operate = new Canvas(operate)
+
+    const toolbar = this._createAbsoluteDom()
+    this._toolbar = getToolBar(this._id, toolbar)
+    const zoom = this._createAbsoluteDom()
+    this._zoom = getZoom(this._id, zoom)
     this._operateManage = getUndoManager(this._id)
     this._shortCutManage = getShortCutManager(this._id, this._dom)
   }
 
-  private _createDom = () => {
-    const preview = document.createElement('div')
-    preview.style.flex = '1'
-    preview.style.backgroundColor = 'white'
-    this._dom.appendChild(preview)
-    return preview
+  private _createDom = (className?: string) => {
+    const div = createDiv({ className, style: { flex: '1', backgroundColor: 'white' } })
+    this._dom.appendChild(div)
+    return div
+  }
+
+  private _createAbsoluteDom = () => {
+    const div = createDiv({ style: { position: 'absolute' } })
+    this._dom.appendChild(div)
+    return div
   }
 
   getPreview() {
