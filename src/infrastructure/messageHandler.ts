@@ -62,5 +62,5 @@ class MessageHandler {
 }
 
 const messageHandler = new MessageHandler()
-
+;(window as any).m = messageHandler
 export default messageHandler

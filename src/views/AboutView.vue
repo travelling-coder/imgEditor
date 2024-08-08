@@ -1,6 +1,6 @@
 <template>
   <div class="about">
-    <RouterLink to="/matting">Matting</RouterLink>
+    <RouterLink to="/ps">PS</RouterLink>
   </div>
 </template>
 

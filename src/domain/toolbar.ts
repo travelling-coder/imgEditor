@@ -1,4 +1,4 @@
-import { createDiv } from '@/infrastructure/createDom'
+import { createDiv, createSvg } from '@/infrastructure/createDom'
 import messageHandler from '@/infrastructure/messageHandler'
 import { getInstance } from '@/infrastructure/singleton'
 
@@ -74,14 +74,11 @@ class Toolbar {
 
   private async createOptionDom(option: ToolbarOptions) {
     const { type, icon, title, unActiveAble } = option
-    const module = (await import(icon)).default
-    const svgDoc = this._parser.parseFromString(await (await fetch(module)).text(), 'image/svg+xml')
-    const svgElement = svgDoc.documentElement
 
     const div = createDiv({
       className: type,
       title,
-      children: [svgElement],
+      children: [await createSvg(icon)],
       style: { flexBasis: '30px' },
       onClick: () => {
         !unActiveAble && this.onClick(div, type)

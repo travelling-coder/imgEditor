@@ -56,5 +56,60 @@
             linear-gradient(45deg, #c0c0c080 25%, transparent 25%, transparent 75%, #c0c0c080 75%, #c0c0c080 100%);
         background-size: var(--background-shape-size) var(--background-shape-size);
         background-position: 0 0, var(--half-background-shape-size) var(--half-background-shape-size);
+
+        position: relative;
+    }
+
+    .ps-rule {
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: white;
+
+        &.ps-rule-v {
+            cursor: ew-resize;
+        }
+
+        &.ps-rule-h {
+            cursor: ns-resize;
+        }
+
+        &.ps-rule-c {
+            background-color: #0001;
+            cursor: pointer;
+
+            &:hover {
+                background-color: #0002;
+            }
+        }
+
+        .help-line-h,
+        .help-line-v {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: var(--help-line-color);
+        }
+
+        .help-line-h {
+            cursor: ns-resize;
+            height: 1px;
+            width: 100%;
+        }
+
+        .help-line-v {
+            cursor: ew-resize;
+            width: 1px;
+            height: 100%;
+        }
+
+        .help-line-infos {
+            border: 1px solid var(--border-color);
+            background-color: var(--background-color);
+            border-radius: 8px;
+            padding: 4px;
+            color: #000;
+            user-select: none;
+        }
     }
 }

@@ -21,16 +21,15 @@ export class Container {
     this._dom = dom
     this.setLayout('lr')
     const preview = this._createDom('ps-preview-canvas')
-    this._preview = new Canvas(preview)
-    const operate = this._createDom('ps-operate-canvas')
-    this._operate = new Canvas(operate)
+    this._preview = new Canvas(this._id, preview, 'preview')
+    // const operate = this._createDom('ps-operate-canvas')
+    // this._operate = new Canvas(this._id, operate, 'operate')
 
-    const toolbar = this._createAbsoluteDom()
-    this._toolbar = getToolBar(this._id, toolbar)
-    const zoom = this._createAbsoluteDom()
-    this._zoom = getZoom(this._id, zoom)
-    this._operateManage = getUndoManager(this._id)
-    this._shortCutManage = getShortCutManager(this._id, this._dom)
+    // this._toolbar = getToolBar(this._id, this._createAbsoluteDom())
+    // this._zoom = getZoom(this._id, this._createAbsoluteDom())
+
+    // this._operateManage = getUndoManager(this._id)
+    // this._shortCutManage = getShortCutManager(this._id, this._dom)
   }
 
   private _createDom = (className?: string) => {
