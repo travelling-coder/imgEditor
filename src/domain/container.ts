@@ -22,8 +22,8 @@ export class Container {
     this.setLayout('lr')
     const preview = this._createDom('ps-preview-canvas')
     this._preview = new Canvas(this._id, preview, 'preview')
-    // const operate = this._createDom('ps-operate-canvas')
-    // this._operate = new Canvas(this._id, operate, 'operate')
+    const operate = this._createDom('ps-operate-canvas')
+    this._operate = new Canvas(this._id, operate, 'operate')
 
     // this._toolbar = getToolBar(this._id, this._createAbsoluteDom())
     // this._zoom = getZoom(this._id, this._createAbsoluteDom())
