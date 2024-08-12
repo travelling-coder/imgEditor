@@ -1,5 +1,8 @@
 <template>
   <div>
+    <div style="position: absolute; z-index: 9999">
+      <input type="file" @change="handleChange" />
+    </div>
     <div class="ps-box" ref="matting"></div>
   </div>
 </template>
@@ -10,6 +13,19 @@ import { onMounted, ref } from 'vue'
 
 const id = Math.random().toString(36).substr(2, 9)
 const matting = ref<HTMLDivElement>()
+
+const handleChange = (e: any) => {
+  console.log(e.target.files[0])
+  const file = e.target.files[0]
+  const reader = new FileReader()
+  reader.readAsDataURL(file)
+  reader.onload = (e) => {
+    const base64 = e.target!.result as string
+    console.log(base64)
+  }
+
+  reader.readAsDataURL(file)
+}
 
 onMounted(() => {
   const s = new Container(matting.value!, id)

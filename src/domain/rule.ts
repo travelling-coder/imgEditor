@@ -80,8 +80,8 @@ class Rule {
     const { width } = this._ruleH
     const { height } = this._ruleV
     const length = type === 'h' ? width : height
-    this._helper.mousedown()
-    this._helper.updateInfos(e, `(${e.clientX}, ${e.clientY})`)
+    this._helper.mousedown(type)
+    this._helper.updateInfos(e)
     return this._helper.createLine(type, genId(), {
       [type === 'h' ? 'left' : 'top']: pending + 'px',
       [type === 'h' ? 'width' : 'height']: length + 'px'
@@ -90,7 +90,7 @@ class Rule {
 
   onMove(e: MouseEvent, state: { id: string; type: 'h' | 'v' }) {
     this._helper.moveLine(state.id, state.type === 'h' ? e.clientY : e.clientX)
-    this._helper.updateInfos(e, `(${e.clientX}, ${e.clientY})`)
+    this._helper.updateInfos(e)
   }
 
   onUp(e: MouseEvent, state: { id: string }) {

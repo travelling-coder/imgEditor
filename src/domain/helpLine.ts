@@ -3,6 +3,7 @@ import polyMousemove from '@/infrastructure/polyMousemove'
 
 export class HelpLineManager {
   parent: HTMLDivElement
+  rect: DOMRect | undefined
   private _infos: HTMLDivElement
   lines: Record<string, { dom: HTMLDivElement; type: 'h' | 'v'; id: string }> = {}
 
@@ -13,24 +14,31 @@ export class HelpLineManager {
       style: { position: 'absolute', top: '0', left: '0', zIndex: '9999', display: 'none' }
     })
     this.parent.appendChild(this._infos)
+    setTimeout(() => {
+      this.rect = dom.getBoundingClientRect()
+    })
   }
 
-  updateInfos(e: MouseEvent, text: string) {
-    this._infos.style.top = e.clientY + 'px'
-    this._infos.style.left = e.clientX + 'px'
+  updateInfos(e: MouseEvent) {
+    const x = e.clientX - (this.rect?.left || 0)
+    const y = e.clientY - (this.rect?.top || 0)
+    const text = `(x: ${x}, y: ${y})`
+
+    this._infos.style.top = y + 'px'
+    this._infos.style.left = x + 'px'
     this._infos.innerText = text
   }
 
   onDown(e: MouseEvent) {
     const target = (e.target as HTMLDivElement).id
-    this.updateInfos(e, `(${e.clientX}, ${e.clientY})`)
-    this.mousedown()
+    this.updateInfos(e)
+    this.mousedown(this.lines[target].type)
     return this.lines[target]
   }
 
   onMove(e: MouseEvent, state: { id: string; type: 'h' | 'v' }) {
     this.moveLine(state.id, state.type === 'h' ? e.clientY : e.clientX)
-    this.updateInfos(e, `(${e.clientX}, ${e.clientY})`)
+    this.updateInfos(e)
   }
 
   onUp(e: MouseEvent, state: { id: string }) {
@@ -58,7 +66,8 @@ export class HelpLineManager {
     return this.lines[id]
   }
 
-  mousedown() {
+  mousedown(type: 'h' | 'v') {
+    document.body.style.cursor = type === 'h' ? 'ns-resize' : 'ew-resize'
     this._infos.style.display = 'block'
   }
 
@@ -66,14 +75,15 @@ export class HelpLineManager {
     const { dom, type } = this.lines[id] || {}
     if (dom) {
       if (type === 'v') {
-        dom.style.left = `${target}px`
+        dom.style.left = `${target + 1 - (this.rect?.left || 0)}px`
       } else {
-        dom.style.top = `${target}px`
+        dom.style.top = `${target + 1 - (this.rect?.top || 0)}px`
       }
     }
   }
 
   mouseup() {
+    document.body.style.cursor = 'unset'
     this._infos.style.display = 'none'
   }
 
