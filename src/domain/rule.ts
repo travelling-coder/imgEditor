@@ -8,7 +8,7 @@ import { genId } from '@/infrastructure/math'
 
 const pending = 30
 const width = `${pending}px`
-class Rule {
+export class Rule {
   private _ruleH: HTMLCanvasElement
   private _ruleV: HTMLCanvasElement
   private _ruleM: HTMLDivElement
@@ -46,7 +46,7 @@ class Rule {
     dom.appendChild(this._ruleH)
     dom.appendChild(this._ruleV)
     dom.appendChild(this._ruleM)
-    this._helper = new HelpLineManager(this._ruleC)
+    this._helper = new HelpLineManager(this._ruleC, this)
     this._ruleM.appendChild(this._ruleC)
     this._id = id
 
@@ -81,7 +81,7 @@ class Rule {
     const { height } = this._ruleV
     const length = type === 'h' ? width : height
     this._helper.mousedown(type)
-    this._helper.updateInfos(e)
+    this._helper.updateInfos(e, type)
     return this._helper.createLine(type, genId(), {
       [type === 'h' ? 'left' : 'top']: pending + 'px',
       [type === 'h' ? 'width' : 'height']: length + 'px'
@@ -89,16 +89,12 @@ class Rule {
   }
 
   onMove(e: MouseEvent, state: { id: string; type: 'h' | 'v' }) {
-    this._helper.moveLine(state.id, state.type === 'h' ? e.clientY : e.clientX)
-    this._helper.updateInfos(e)
+    this._helper.moveLine(e, state.id)
+    this._helper.updateInfos(e, state.type)
   }
 
   onUp(e: MouseEvent, state: { id: string }) {
-    const target = e.target as HTMLCanvasElement
-    this._helper.mouseup()
-    if (target === this._ruleH || target === this._ruleV) {
-      this._helper.removeLine(state.id)
-    }
+    this._helper.mouseup(e, state.id)
   }
 
   initCanvasEvent() {
@@ -239,6 +235,10 @@ class Rule {
 
   destroy() {
     messageHandler.off(`zoom-${this._id}`)
+  }
+
+  getZeroPoint() {
+    return this._zeroPoint
   }
 }
 
