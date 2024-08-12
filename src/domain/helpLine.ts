@@ -70,8 +70,8 @@ export class HelpLineManager {
   }
 
   getTarget(e: MouseEvent) {
-    const x = Math.max(e.clientX + 1 - (this.rect?.left || 0), 0)
-    const y = Math.max(e.clientY + 1 - (this.rect?.top || 0), 0)
+    const x = Math.max(e.clientX - (this.rect?.left || 0), 0)
+    const y = Math.max(e.clientY - (this.rect?.top || 0), 0)
     return { x, y }
   }
 
@@ -87,8 +87,8 @@ export class HelpLineManager {
     const target = e.target as HTMLDivElement
     const type = this.lines[id].type
     if (
-      target.classList.contains(`ps-rule-${type}`) ||
-      this.getTarget(e)[type === 'h' ? 'y' : 'x'] <= 0
+      this.getTarget(e)[type === 'h' ? 'y' : 'x'] <= this.parentRule.getPending() ||
+      target.classList.contains(`ps-rule-${type}`)
     ) {
       this.removeLine(id)
     }
@@ -102,9 +102,5 @@ export class HelpLineManager {
       dom.remove()
       delete this.lines[id]
     }
-  }
-
-  getZeroPoint() {
-    return this.parentRule._zeroPoint
   }
 }

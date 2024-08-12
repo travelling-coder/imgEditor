@@ -19,6 +19,7 @@ export class Rule {
   private _zeroPoint: Position = { x: 160, y: 100 }
   private _color = '#000'
   private _step = 0
+  private _pending = pending
 
   constructor(id: string, dom: HTMLDivElement) {
     // 垂直标尺
@@ -239,6 +240,10 @@ export class Rule {
 
   getZeroPoint() {
     return this._zeroPoint
+  }
+
+  getPending() {
+    return this._pending
   }
 }
 

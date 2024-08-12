@@ -40,7 +40,7 @@ export const createCanvas = (params?: CreateDomParams) => {
 }
 
 export const createSvg = async (src: string) => {
-  const module = (await import(src)).default
+  const module = (await import(/* @vite-ignore */ src)).default
   const svgDoc = parser.parseFromString(await (await fetch(module)).text(), 'image/svg+xml')
   return svgDoc.documentElement
 }
