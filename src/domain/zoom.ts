@@ -20,9 +20,9 @@ class Zoom {
   init() {
     this.initDom()
     messageHandler.emit(`zoom-${this._id}`, { zoom: this._zoom })
-    messageHandler.on(`zoom-${this._id}`, this.onZoom)
-    messageHandler.on(`zoom-in-${this._id}`, this.zoomIn)
-    messageHandler.on(`zoom-out-${this._id}`, this.zoomOut)
+    messageHandler.on(`zoom-${this._id}`, this.onZoom.bind(this))
+    messageHandler.on(`zoom-in-${this._id}`, this.zoomIn.bind(this))
+    messageHandler.on(`zoom-out-${this._id}`, this.zoomOut.bind(this))
   }
 
   initDom() {
@@ -40,6 +40,7 @@ class Zoom {
       style: { display: 'flex', justifyContent: 'center' }
     })
     const zoomDom = createDiv({ content: `${this._zoom}%` })
+    this._zoomDom = zoomDom
 
     this._dom.appendChild(zoomOutBtn)
     this._dom.appendChild(zoomDom)
@@ -47,7 +48,10 @@ class Zoom {
   }
 
   onZoom(data: { zoom: number }) {
+    console.log(data)
+
     this._zoom = data.zoom
+    this._zoomDom && (this._zoomDom!.innerText = `${this._zoom}%`)
   }
 
   // 放大

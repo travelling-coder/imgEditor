@@ -6,8 +6,6 @@ import { ctxDrawLine, ctxDrawText } from '@/infrastructure/canvasDrawer'
 import polyMousemove from '@/infrastructure/polyMousemove'
 import { genId } from '@/infrastructure/math'
 
-const pending = 30
-const width = `${pending}px`
 export class Rule {
   private _ruleH: HTMLCanvasElement
   private _ruleV: HTMLCanvasElement
@@ -19,30 +17,39 @@ export class Rule {
   private _zeroPoint: Position = { x: 160, y: 100 }
   private _color = '#000'
   private _step = 0
-  private _pending = pending
+  private _pending: number
 
-  constructor(id: string, dom: HTMLDivElement) {
+  constructor(id: string, dom: HTMLDivElement, pending: number) {
+    this._pending = pending
     // 垂直标尺
     this._ruleV = createCanvas({
       className: ['ps-rule-v', 'ps-rule'],
-      style: { height: `calc(100% - ${pending}px)`, width: `${pending}px`, top: `${pending}px` },
-      attr: { width: pending }
+      style: {
+        height: `calc(100% - ${this._pending}px)`,
+        width: `${this._pending}px`,
+        top: `${this._pending}px`
+      },
+      attr: { width: this._pending }
     })
     // 水平标尺
     this._ruleH = createCanvas({
       className: ['ps-rule-h', 'ps-rule'],
-      style: { height: `${pending}px`, width: `calc(100% - ${pending}px)`, left: `${pending}px` },
-      attr: { height: pending }
+      style: {
+        height: `${this._pending}px`,
+        width: `calc(100% - ${this._pending}px)`,
+        left: `${this._pending}px`
+      },
+      attr: { height: this._pending }
     })
     // 中间占位
     this._ruleM = createDiv({
       className: ['ps-rule-m', 'ps-rule'],
-      style: { height: width, width }
+      style: { height: `${this._pending}px`, width: `${this._pending}px` }
     })
     // 辅助线盒子
     this._ruleC = createDiv({
       className: ['ps-rule-c', 'ps-rule'],
-      style: { height: width, width }
+      style: { height: `${this._pending}px`, width: `${this._pending}px` }
     })
     dom.appendChild(this._ruleH)
     dom.appendChild(this._ruleV)
@@ -53,8 +60,8 @@ export class Rule {
 
     setTimeout(() => {
       const { clientHeight, clientWidth } = dom
-      this._ruleV.height = clientHeight - pending
-      this._ruleH.width = clientWidth - pending
+      this._ruleV.height = clientHeight - this._pending
+      this._ruleH.width = clientWidth - this._pending
       this.init()
     })
   }
@@ -70,11 +77,15 @@ export class Rule {
     ctxV.textBaseline = 'middle'
 
     this.drawRule()
-    messageHandler.on(`zoom-${this._id}`, (data: { zoom: number }) => {
-      this._zoom = data.zoom
+    this.initCanvasEvent()
+    // messageHandler.on(`zoom-${this._id}`, (data: { zoom: number }) => {
+    //   this._zoom = data.zoom
+    //   this.drawRule()
+    // })
+    messageHandler.on(`zero-point-${this._id}`, (data: Position) => {
+      this._zeroPoint = data
       this.drawRule()
     })
-    this.initCanvasEvent()
   }
 
   onDown(e: MouseEvent, type: 'h' | 'v') {
@@ -84,7 +95,7 @@ export class Rule {
     this._helper.mousedown(type)
     this._helper.updateInfos(e, type)
     return this._helper.createLine(type, genId(), {
-      [type === 'h' ? 'left' : 'top']: pending + 'px',
+      [type === 'h' ? 'left' : 'top']: this._pending + 'px',
       [type === 'h' ? 'width' : 'height']: length + 'px'
     })
   }
@@ -131,21 +142,21 @@ export class Rule {
 
   drawSmallMark(p: Position, type: 'h' | 'v') {
     const ctx = type === 'h' ? this._ruleH.getContext('2d')! : this._ruleV.getContext('2d')!
-    const end = pending * 0.9
+    const end = this._pending * 0.9
     const endPoint = type === 'h' ? { x: p.x, y: end } : { x: end, y: p.y }
     ctxDrawLine(ctx, p, endPoint, this._color)
   }
 
   drawMiddleMark(p: Position, type: 'h' | 'v') {
     const ctx = type === 'h' ? this._ruleH.getContext('2d')! : this._ruleV.getContext('2d')!
-    const end = pending * 0.8
+    const end = this._pending * 0.8
     const endPoint = type === 'h' ? { x: p.x, y: end } : { x: end, y: p.y }
     ctxDrawLine(ctx, p, endPoint, this._color)
   }
 
   drawLargeMark(p: Position, text: string, type: 'h' | 'v') {
     const ctx = type === 'h' ? this._ruleH.getContext('2d')! : this._ruleV.getContext('2d')!
-    const end = pending * 0.7
+    const end = this._pending * 0.7
     const endPoint = type === 'h' ? { x: p.x, y: end } : { x: end, y: p.y }
     const textPoint = type === 'h' ? { x: p.x, y: end - 2 } : { x: end - 2, y: p.y }
 
@@ -192,14 +203,12 @@ export class Rule {
 
   drawHRuler() {
     const { width } = this._ruleH
-    // const total = (width * this._zoom) / 100
     const total = width
-    // const start = ((this._zeroPoint.x - pending) * this._zoom) / 100
-    const start = this._zeroPoint.x - pending
+    const start = this._zeroPoint.x
 
     const marks = this.getMarks(total, start)
     for (let i = 0; i < marks.length; i++) {
-      const point = { x: marks[i].p, y: pending }
+      const point = { x: marks[i].p, y: this._pending }
       const type = marks[i].type
       if (type === 'l') {
         this.drawLargeMark(point, marks[i].t, 'h')
@@ -213,14 +222,12 @@ export class Rule {
 
   drawVRuler() {
     const { height } = this._ruleV
-    // const total = (height * this._zoom) / 100
     const total = height
-    // const start = ((this._zeroPoint.y - pending) * this._zoom) / 100
-    const start = this._zeroPoint.y - pending
+    const start = this._zeroPoint.y
 
     const marks = this.getMarks(total, start)
     for (let i = 0; i < marks.length; i++) {
-      const point = { x: pending, y: marks[i].p }
+      const point = { x: this._pending, y: marks[i].p }
       const type = marks[i].type
       if (type === 'l') {
         this.drawLargeMark(point, marks[i].t, 'v')
@@ -236,6 +243,7 @@ export class Rule {
 
   destroy() {
     messageHandler.off(`zoom-${this._id}`)
+    messageHandler.off(`zero-point-${this._id}`)
   }
 
   getZeroPoint() {
@@ -247,6 +255,6 @@ export class Rule {
   }
 }
 
-export default (id: string, dom: HTMLDivElement, type: string) => {
-  return getInstance(`rule-${id}-${type}`, () => new Rule(id, dom))
+export default (id: string, dom: HTMLDivElement, type: string, pending: number) => {
+  return getInstance(`rule-${id}-${type}`, () => new Rule(id, dom, pending))
 }

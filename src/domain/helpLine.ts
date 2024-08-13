@@ -24,7 +24,10 @@ export class HelpLineManager {
   updateInfos(e: MouseEvent, type: 'h' | 'v') {
     const { x, y } = this.getTarget(e)
     const { x: zeroX, y: zeroY } = this.parentRule.getZeroPoint()
-    const text = type === 'h' ? `y: ${y - zeroY}` : `x: ${x - zeroX}`
+    const text =
+      type === 'h'
+        ? `y: ${y - zeroY - this.parentRule.getPending()}`
+        : `x: ${x - zeroX - this.parentRule.getPending()}`
 
     this._infos.style.top = y + 'px'
     this._infos.style.left = x + 'px'
