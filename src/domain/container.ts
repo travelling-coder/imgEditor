@@ -27,8 +27,8 @@ export class Container {
     this.setLayout('lr')
     const preview = this._createDom('ps-preview-canvas')
     this._preview = new Canvas(this._id, preview, 'preview', this._pending)
-    // const operate = this._createDom('ps-operate-canvas')
-    // this._operate = new Canvas(this._id, operate, 'operate', this._pending)
+    const operate = this._createDom('ps-operate-canvas')
+    this._operate = new Canvas(this._id, operate, 'operate', this._pending)
 
     // this._toolbar = getToolBar(this._id, this._createAbsoluteDom())
     this._zoom = getZoom(this._id, this._createAbsoluteDom())
@@ -97,11 +97,11 @@ export class Container {
       const x = Math.floor((canvasWidth - width * scale) / 2)
       const y = Math.floor((canvasHeight - height * scale) / 2)
 
-      messageHandler.emit(`zoom-${this._id}`, { zoom: Math.floor(scale * 100) })
+      messageHandler.emit(`zoom-init-${this._id}`, { zoom: Math.floor(scale * 100) })
       messageHandler.emit(`zero-point-${this._id}`, { x, y })
 
-      this._preview.loadImg(img, scale, { x, y })
-      this._operate.loadImg(img, scale, { x, y })
+      this._preview.loadImg(img)
+      this._operate.loadImg(img)
     }
   }
 }

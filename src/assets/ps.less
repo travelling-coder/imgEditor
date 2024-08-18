@@ -46,7 +46,17 @@
 
     .ps-zoom {
         display: flex;
+        user-select: none;
         .base-container();
+
+        .ps-zoom-disabled {
+            cursor: no-drop;
+            user-select: none;
+
+            color: var(--disable-color);
+            background-color: var(--disable-background-color);
+            border-color: var(--disable-border-color);
+        }
     }
 
     .ps-canvas-container {
@@ -119,4 +129,8 @@
             display: 'none'
         }
     }
+}
+
+.dragging {
+    cursor: grabbing;
 }

@@ -1,6 +1,8 @@
 import { createCanvas } from '@/infrastructure/createDom'
 import getRule from './rule'
 import messageHandler from '@/infrastructure/messageHandler'
+import polyMousemove from '@/infrastructure/polyMousemove'
+import { onMove, onDown, onUp } from './handler/drag'
 
 export class Canvas {
   private _dom: HTMLDivElement
@@ -12,6 +14,9 @@ export class Canvas {
 
   private _rule: ReturnType<typeof getRule>
   private _pending: number
+  zoom: number = 100
+  zeroPoint: Position = { x: 0, y: 0 }
+  img: HTMLImageElement | null = null
 
   constructor(id: string, dom: HTMLDivElement, type: string, pending: number) {
     dom.classList.add('ps-canvas-container')
@@ -31,6 +36,27 @@ export class Canvas {
   initCanvas() {
     this._canvas.width = this._dom.clientWidth - this._pending
     this._canvas.height = this._dom.clientHeight - this._pending
+
+    messageHandler.on(`zoom-change-${this._id}`, (data: { zoom: number }) => {
+      this.zoom = data.zoom
+      this.drawImage()
+    })
+    messageHandler.on(`zero-point-${this._id}`, (data: Position) => {
+      this.zeroPoint = data
+      this.drawImage()
+    })
+
+    polyMousemove(this._canvas, {
+      onDown: (e) => {
+        return onDown.bind(this)(e, this.zeroPoint)
+      },
+      onMove: (e, s) => {
+        messageHandler.emit(`zero-point-${this._id}`, onMove(e, s))
+      },
+      onUp: (e, s) => {
+        messageHandler.emit(`zero-point-${this._id}`, onUp(e, s))
+      }
+    })
   }
 
   canvas() {
@@ -58,14 +84,19 @@ export class Canvas {
     this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height)
   }
 
-  drawImage(img: HTMLImageElement, scale: number, { x, y }: Position) {
-    const { width, height } = img
-    this.clearCanvas()
-    this._ctx.drawImage(img, x, y, width * scale, height * scale)
+  drawImage() {
+    if (this.img) {
+      const { width, height } = this.img!
+      const { x, y } = this.zeroPoint
+      const scale = this.zoom / 100
+      this.clearCanvas()
+      this._ctx.drawImage(this.img!, x, y, width * scale, height * scale)
+    }
   }
 
-  loadImg(img: HTMLImageElement, zoom: number, p: Position) {
-    this.drawImage(img, zoom, p)
+  loadImg(img: HTMLImageElement) {
+    this.img = img
+    this.drawImage()
   }
 
   getSize() {

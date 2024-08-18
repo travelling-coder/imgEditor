@@ -10,6 +10,8 @@ class Zoom {
   private _zoom: number = 100
   private _zoomDom: HTMLDivElement | undefined
   private _fixedZoom: number = 100
+  private _zoomInBtn: HTMLDivElement | undefined
+  private _zoomOutBtn: HTMLDivElement | undefined
 
   constructor(id: string, dom: HTMLDivElement) {
     this._dom = dom
@@ -19,8 +21,7 @@ class Zoom {
 
   init() {
     this.initDom()
-    messageHandler.emit(`zoom-${this._id}`, { zoom: this._zoom })
-    messageHandler.on(`zoom-${this._id}`, this.onZoom.bind(this))
+    messageHandler.on(`zoom-init-${this._id}`, this.onInit.bind(this))
     messageHandler.on(`zoom-in-${this._id}`, this.zoomIn.bind(this))
     messageHandler.on(`zoom-out-${this._id}`, this.zoomOut.bind(this))
   }
@@ -33,45 +34,104 @@ class Zoom {
 
     const zoomInBtn = createDiv({
       content: '+',
-      style: { display: 'flex', justifyContent: 'center' }
+      style: { display: 'flex', justifyContent: 'center' },
+      onClick: this.zoomIn.bind(this),
+      attr: { title: '放大' }
     })
     const zoomOutBtn = createDiv({
       content: '-',
-      style: { display: 'flex', justifyContent: 'center' }
+      style: { display: 'flex', justifyContent: 'center' },
+      onClick: this.zoomOut.bind(this),
+      attr: { title: '缩小' }
     })
-    const zoomDom = createDiv({ content: `${this._zoom}%` })
+    const zoomDom = createDiv({
+      content: `${this._zoom}%`,
+      onClick: this.reset.bind(this),
+      attr: { title: '还原尺寸' }
+    })
     this._zoomDom = zoomDom
+    this._zoomInBtn = zoomInBtn
+    this._zoomOutBtn = zoomOutBtn
 
     this._dom.appendChild(zoomOutBtn)
     this._dom.appendChild(zoomDom)
     this._dom.appendChild(zoomInBtn)
   }
 
-  onZoom(data: { zoom: number }) {
-    console.log(data)
+  onInit({ zoom }: { zoom: number }) {
+    this._fixedZoom = zoom
+    this.onZoom(zoom)
+  }
 
-    this._zoom = data.zoom
+  zoomInAble() {
+    return this._zoom < this._maxZoom
+  }
+
+  zoomOutAble() {
+    return this._zoom > this._minZoom
+  }
+
+  checkZoomInAble() {
+    if (!this.zoomInAble()) {
+      this._zoomInBtn!.classList.add('ps-zoom-disabled')
+    } else {
+      this._zoomInBtn!.classList.remove('ps-zoom-disabled')
+    }
+  }
+
+  checkZoomOutAble() {
+    if (!this.zoomOutAble()) {
+      this._zoomOutBtn!.classList.add('ps-zoom-disabled')
+    } else {
+      this._zoomOutBtn!.classList.remove('ps-zoom-disabled')
+    }
+  }
+
+  onZoom(zoom: number) {
+    this._zoom = zoom
     this._zoomDom && (this._zoomDom!.innerText = `${this._zoom}%`)
+    this.checkZoomInAble()
+    this.checkZoomOutAble()
+    messageHandler.emit(`zoom-change-${this._id}`, { zoom })
+  }
+
+  getStep() {
+    if (this._zoom <= 50) {
+      return 5
+    } else if (this._zoom <= 100) {
+      return 10
+    } else if (this._zoom <= 200) {
+      return 20
+    } else if (this._zoom <= 500) {
+      return 50
+    } else {
+      return 100
+    }
   }
 
   // 放大
   zoomIn() {
-    // this._zoom += this._step
-    // if (this._zoom > 200) {
-    //   this._zoom = 200
-    // }
+    if (!this.zoomInAble()) return
+    const step = this.getStep()
+    const newZoom = Math.floor(this._zoom / step) * step + step
+    this.onZoom(newZoom)
   }
 
   // 缩小
-  zoomOut() {}
+  zoomOut() {
+    if (!this.zoomOutAble()) return
+    const step = this.getStep()
+    const newZoom = Math.floor(this._zoom / step) * step - step
+    this.onZoom(newZoom)
+  }
 
   reset() {
-    this._zoom = this._fixedZoom
-    messageHandler.emit(`zoom-${this._id}`, { zoom: this._zoom })
+    this.onZoom(this._fixedZoom)
+    messageHandler.emit(`zoom-change-${this._id}`, { zoom: this._fixedZoom })
   }
 
   destroy() {
-    messageHandler.off(`zoom-${this._id}`)
+    messageHandler.off(`zoom-init-${this._id}`)
     messageHandler.off(`zoom-in-${this._id}`)
     messageHandler.off(`zoom-out-${this._id}`)
   }

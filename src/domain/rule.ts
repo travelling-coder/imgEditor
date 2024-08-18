@@ -5,6 +5,7 @@ import { HelpLineManager } from './helpLine'
 import { ctxDrawLine, ctxDrawText } from '@/infrastructure/canvasDrawer'
 import polyMousemove from '@/infrastructure/polyMousemove'
 import { genId } from '@/infrastructure/math'
+import { debounce, throttle } from '@/infrastructure/helper'
 
 export class Rule {
   private _ruleH: HTMLCanvasElement
@@ -78,10 +79,10 @@ export class Rule {
 
     this.drawRule()
     this.initCanvasEvent()
-    // messageHandler.on(`zoom-${this._id}`, (data: { zoom: number }) => {
-    //   this._zoom = data.zoom
-    //   this.drawRule()
-    // })
+    messageHandler.on(`zoom-change-${this._id}`, (data: { zoom: number }) => {
+      this._zoom = data.zoom
+      this.drawRule()
+    })
     messageHandler.on(`zero-point-${this._id}`, (data: Position) => {
       this._zeroPoint = data
       this.drawRule()
@@ -127,7 +128,6 @@ export class Rule {
   }
 
   drawRule() {
-    this.getStep()
     this.clearCanvas()
     this.drawHRuler()
     this.drawVRuler()
@@ -164,32 +164,30 @@ export class Rule {
     ctxDrawText(ctx, text, textPoint, this._color)
   }
 
-  getStep() {
-    const { width } = this._ruleH
-    const { height } = this._ruleV
-    const step = ((Math.min(width, height) / 5) * this._zoom) / 100
-    if (step < 10) {
-      this._step = 10
-    } else if (step < 20) {
-      this._step = 20
-    } else if (step < 50) {
-      this._step = 50
-    } else {
-      this._step = 100
-    }
-  }
-
   getMarks(total: number, start: number) {
     const marks = []
-    const step = (this._step * this._zoom) / 1000
-    // const firstMark = Math.floor(start / step)
-    // const base = start % step < 0 ? (start % step) + step : start % step
-    const base = start % step
+    let step = 0
+    if (this._zoom < 20) {
+      step = 100
+    } else if (this._zoom < 50) {
+      step = 50
+    } else if (this._zoom < 100) {
+      step = 20
+    } else if (this._zoom < 200) {
+      step = 10
+    } else {
+      step = 5
+    }
+    const realStep = (step * this._zoom) / 100
 
-    for (let i = 0; i * step <= total; i++) {
-      const p = i * step + base
-      const t = Math.abs((i * this._step) / 10 - start + base)
-      const type = t % this._step ? ((t * 2) % this._step ? 's' : 'm') : 'l'
+    const base = Number((start % realStep).toFixed(2))
+    const res = Math.floor(start / realStep)
+
+    for (let i = 0; i * realStep <= total; i++) {
+      const p = i * realStep + base
+      const realIndex = Math.abs(i - res)
+      const t = realIndex * step
+      const type = realIndex % 10 ? (realIndex % 5 ? 's' : 'm') : 'l'
 
       marks.push({
         p,
@@ -242,7 +240,7 @@ export class Rule {
   reset() {}
 
   destroy() {
-    messageHandler.off(`zoom-${this._id}`)
+    messageHandler.off(`zoom-init-${this._id}`)
     messageHandler.off(`zero-point-${this._id}`)
   }
 

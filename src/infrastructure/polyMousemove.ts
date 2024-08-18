@@ -1,3 +1,5 @@
+import { debounce, throttle } from './helper'
+
 export default <T = any>(
   dom: HTMLElement,
   {
@@ -8,10 +10,13 @@ export default <T = any>(
     onDown?: (event: MouseEvent) => T
     onMove: (event: MouseEvent, state: T) => void
     onUp?: (event: MouseEvent, state: T) => void
-  }
+  },
+  delay = 10
 ) => {
   let mousedown = false
   let state: T
+
+  const realMove = throttle((event: MouseEvent) => onMove(event, state), delay)
 
   const onMouseDown = (event: MouseEvent) => {
     mousedown = true
@@ -21,7 +26,7 @@ export default <T = any>(
   }
 
   const onMouseMove = (event: MouseEvent) => {
-    mousedown && onMove(event, state)
+    mousedown && realMove(event, state)
   }
 
   const onMouseUp = (event: MouseEvent) => {
