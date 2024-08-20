@@ -17,3 +17,8 @@ export const throttle = (fn: (...args: any) => void, delay = defaultDelay) => {
     }
   }
 }
+
+export const preventDefault = (event: Event) => {
+  event.preventDefault()
+  event.stopPropagation()
+}

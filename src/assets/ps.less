@@ -36,6 +36,8 @@
 }
 
 .ps-container {
+    font-size: 12px;
+
     .ps-toolbar {
         display: flex;
         width: 100px;
@@ -129,8 +131,124 @@
             display: 'none'
         }
     }
+
+    .ps-header {
+        height: 40px;
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 12px;
+        padding: 0 12px;
+    }
+
+    .ps-toolbar-item {
+        display: flex;
+        color: #000;
+        align-items: center;
+        gap: 12px;
+    }
 }
+
+
+.slider-container {
+    width: 200px;
+    height: 14px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--default-background-color);
+    padding: 0 10px;
+    cursor: pointer;
+    position: relative;
+
+    &:hover {
+        background-color: var(--thirds-hover-background-color);
+
+        .slider-bg {
+            background-color: var(--secondary-primary-color);
+        }
+    }
+
+    .slider-bg {
+        flex: 1;
+        height: 6px;
+        border-radius: 3px;
+        background-color: var(--secondary-background-color);
+        position: relative;
+
+        .slider-handler {
+            position: absolute;
+            top: 3px;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            border-radius: 5px;
+            transform: translate(-50%, -50%);
+            background-color: var(--primary-color);
+
+            &:hover {
+                background-color: var(--primary-hover-color);
+                border: 1px solid var(--primary-border-color);
+                transform: translate(-50%, -50%) scale(1.5);
+            }
+        }
+    }
+}
+
+
+.tooltip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #000;
+    color: #fff;
+    padding: 8px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+    &.tooltip-top {
+        transform: translate(-50%, -100%);
+
+        &::before {
+            content: "";
+            position: absolute;
+            display: block;
+            height: 10px;
+            width: 10px;
+            bottom: 10px;
+            left: 50%;
+            transform: translate(-50%, 0);
+            border-width: 5px;
+            border-style: solid;
+            border-color: transparent transparent #000 transparent;
+        }
+    }
+
+    &.tooltip-bottom {
+        transform: translate(-50%, 100%);
+
+        &::before {
+            content: "";
+            position: absolute;
+            display: block;
+            height: 10px;
+            width: 10px;
+            top: -10px;
+            left: 50%;
+            transform: translate(-50%, 0);
+            border-width: 5px;
+            border-style: solid;
+            border-color: transparent transparent #000 transparent;
+        }
+    }
+
+}
+
 
 .dragging {
     cursor: grabbing;
+}
+
+.no-select {
+    user-select: none;
 }

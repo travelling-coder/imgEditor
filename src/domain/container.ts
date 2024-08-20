@@ -6,6 +6,7 @@ import getZoom from './components/zoom'
 import { createDiv } from '@/infrastructure/createDom'
 import messageHandler from '@/infrastructure/messageHandler'
 import { getMsgType } from '@/infrastructure/messageHandlerConstants'
+import { Hardness } from './components/hardness'
 
 const defaultPending = 30
 
@@ -26,13 +27,17 @@ export class Container {
     dom.className = `${dom.className} ps-container`
     this._dom = dom
     this.setLayout('lr')
-    const preview = this._createDom('ps-preview-canvas')
-    this._preview = new Canvas(this._id, preview, 'preview', this._pending)
-    const operate = this._createDom('ps-operate-canvas')
-    this._operate = new Canvas(this._id, operate, 'operate', this._pending)
 
-    this._toolbar = getToolBar(this._id, this._createAbsoluteDom())
-    this._zoom = getZoom(this._id, this._createAbsoluteDom())
+    // const preview = this._createDom('ps-preview-canvas')
+    // this._preview = new Canvas(this._id, preview, 'preview', this._pending)
+    // const operate = this._createDom('ps-operate-canvas')
+    // this._operate = new Canvas(this._id, operate, 'operate', this._pending)
+
+    // this._toolbar = getToolBar(this._id, this._createAbsoluteDom())
+    // this._zoom = getZoom(this._id, this._createAbsoluteDom())
+
+    const header = this._createDom('ps-header')
+    new Hardness(this._id, 50, header)
 
     this._operateManage = getUndoManager(this._id)
     this._shortCutManage = getShortCutManager(this._id, this._dom)

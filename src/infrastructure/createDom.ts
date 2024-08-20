@@ -1,7 +1,7 @@
 interface CreateDomParams {
   className?: string | string[]
   style?: Partial<CSSStyleDeclaration>
-  content?: string
+  content?: string | HTMLElement
   children?: HTMLElement[]
   title?: string
   onClick?: (e: MouseEvent) => void
@@ -21,7 +21,13 @@ const readParams = <T extends HTMLElement>(dom: T, params: CreateDomParams = {})
       dom.style[key] = style[key]!
     }
   }
-  content && (dom.innerHTML = content)
+  if (content) {
+    if (typeof content === 'string') {
+      dom.textContent = content
+    } else {
+      dom.appendChild(content)
+    }
+  }
   title && (dom.title = title)
   children && children.forEach((child) => dom.appendChild(child))
   onClick && dom.addEventListener('click', onClick)
@@ -43,4 +49,9 @@ export const createSvg = async (src: string) => {
   const module = (await import(/* @vite-ignore */ src)).default
   const svgDoc = parser.parseFromString(await (await fetch(module)).text(), 'image/svg+xml')
   return svgDoc.documentElement
+}
+
+export const createSpan = (params?: CreateDomParams) => {
+  const span = document.createElement('span')
+  return readParams(span, params)
 }
