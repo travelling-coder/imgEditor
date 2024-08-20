@@ -1,4 +1,5 @@
 import messageHandler from '@/infrastructure/messageHandler'
+import { getMsgType } from '@/infrastructure/messageHandlerConstants'
 import { Queue } from '@/infrastructure/queue'
 import { getInstance } from '@/infrastructure/singleton'
 
@@ -12,6 +13,11 @@ interface UndoManagerExecData {
 class UndoRedoManager {
   private steps = new Queue<UndoManagerExecData>(maxStep)
   private currentStep = -1
+  private _id: string
+
+  constructor(id: string) {
+    this._id = id
+  }
 
   clear() {
     this.steps.clear()
@@ -43,12 +49,12 @@ class UndoRedoManager {
   }
 
   private updateAble() {
-    messageHandler.emit('redoAble', this.redoAble())
-    messageHandler.emit('undoAble', this.undoAble())
+    messageHandler.emit(getMsgType('redoAble', this._id), this.redoAble())
+    messageHandler.emit(getMsgType('undoAble', this._id), this.undoAble())
   }
 
   exec({ type, data }: UndoManagerExecData, isNewStep: boolean = true) {
-    messageHandler.emit(type, data)
+    messageHandler.emit(getMsgType(type, this._id), data)
 
     if (isNewStep) {
       this.steps.pushWithStep(this.currentStep, { type, data })
@@ -59,5 +65,5 @@ class UndoRedoManager {
 }
 
 export default (id: string) => {
-  return getInstance(`undo-redo-manager-${id}`, () => new UndoRedoManager())
+  return getInstance(`undo-redo-manager-${id}`, () => new UndoRedoManager(id))
 }

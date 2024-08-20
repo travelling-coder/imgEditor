@@ -1,10 +1,11 @@
 import { Canvas } from './canvas'
-import getShortCutManager from './shortCutManager'
-import getUndoManager from './undoManager'
-import getToolBar from './toolbar'
-import getZoom from './zoom'
+import getShortCutManager from './scheduler/shortCutManager'
+import getUndoManager from './scheduler/undoManager'
+import getToolBar from './components/toolbar'
+import getZoom from './components/zoom'
 import { createDiv } from '@/infrastructure/createDom'
 import messageHandler from '@/infrastructure/messageHandler'
+import { getMsgType } from '@/infrastructure/messageHandlerConstants'
 
 const defaultPending = 30
 
@@ -30,7 +31,7 @@ export class Container {
     const operate = this._createDom('ps-operate-canvas')
     this._operate = new Canvas(this._id, operate, 'operate', this._pending)
 
-    // this._toolbar = getToolBar(this._id, this._createAbsoluteDom())
+    this._toolbar = getToolBar(this._id, this._createAbsoluteDom())
     this._zoom = getZoom(this._id, this._createAbsoluteDom())
 
     this._operateManage = getUndoManager(this._id)
@@ -97,8 +98,8 @@ export class Container {
       const x = Math.floor((canvasWidth - width * scale) / 2)
       const y = Math.floor((canvasHeight - height * scale) / 2)
 
-      messageHandler.emit(`zoom-init-${this._id}`, { zoom: Math.floor(scale * 100) })
-      messageHandler.emit(`zero-point-${this._id}`, { x, y })
+      messageHandler.emit(getMsgType('zoomInit', this._id), { zoom: Math.floor(scale * 100) })
+      messageHandler.emit(getMsgType('zeroPoint', this._id), { x, y })
 
       this._preview.loadImg(img)
       this._operate.loadImg(img)

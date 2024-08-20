@@ -6,6 +6,7 @@ import { ctxDrawLine, ctxDrawText } from '@/infrastructure/canvasDrawer'
 import polyMousemove from '@/infrastructure/polyMousemove'
 import { genId } from '@/infrastructure/math'
 import { debounce, throttle } from '@/infrastructure/helper'
+import { getMsgType } from '@/infrastructure/messageHandlerConstants'
 
 export class Rule {
   private _ruleH: HTMLCanvasElement
@@ -79,11 +80,11 @@ export class Rule {
 
     this.drawRule()
     this.initCanvasEvent()
-    messageHandler.on(`zoom-change-${this._id}`, (data: { zoom: number }) => {
+    messageHandler.on(getMsgType('zoomChange', this._id), (data: { zoom: number }) => {
       this._zoom = data.zoom
       this.drawRule()
     })
-    messageHandler.on(`zero-point-${this._id}`, (data: Position) => {
+    messageHandler.on(getMsgType('zeroPoint', this._id), (data: Position) => {
       this._zeroPoint = data
       this.drawRule()
     })
@@ -240,8 +241,8 @@ export class Rule {
   reset() {}
 
   destroy() {
-    messageHandler.off(`zoom-init-${this._id}`)
-    messageHandler.off(`zero-point-${this._id}`)
+    messageHandler.off(getMsgType('zoomInit', this._id))
+    messageHandler.off(getMsgType('zeroPoint', this._id))
   }
 
   getZeroPoint() {

@@ -16,14 +16,14 @@ const defaultConfig: ToolbarOptions[] = [
     unActiveAble: true
   },
   {
-    type: 'pen',
-    icon: 'pen',
-    title: 'pen'
-  },
-  {
     type: 'pencil',
     icon: 'pencil',
     title: 'pencil'
+  },
+  {
+    type: 'pen',
+    icon: 'pen',
+    title: 'pen'
   },
   {
     type: 'easer',
@@ -38,9 +38,9 @@ class Toolbar {
   private _dom: HTMLDivElement
   private _basicIconUrl: string
   private _options: ToolbarOptions[]
-  private _parser: DOMParser = new DOMParser()
   private _domList: HTMLDivElement[] = []
   private _activeOption: string | null = null
+  private _id: string
 
   constructor(
     id: string,
@@ -48,6 +48,7 @@ class Toolbar {
     basicIconUrl: string = '../assets/icons/',
     options: ToolbarOptions[] = defaultConfig
   ) {
+    this._id = id
     this._dom = dom
     this._basicIconUrl = basicIconUrl
     this._options = options.map((option) => ({
@@ -68,8 +69,8 @@ class Toolbar {
   initDom() {
     this._dom.classList.add('ps-toolbar')
     this._dom.style.position = 'absolute'
-    this._dom.style.top = '10px'
-    this._dom.style.left = '10px'
+    this._dom.style.top = '30px'
+    this._dom.style.left = '30px'
   }
 
   private async createOptionDom(option: ToolbarOptions) {
@@ -107,7 +108,7 @@ class Toolbar {
   }
 
   emitToolbarEvent(type: ToolbarType) {
-    messageHandler.emit(type)
+    messageHandler.emit(`toolbar-${type}-${this._id}`)
   }
 
   options() {

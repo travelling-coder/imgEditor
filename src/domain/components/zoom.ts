@@ -1,5 +1,6 @@
 import { createDiv } from '@/infrastructure/createDom'
 import messageHandler from '@/infrastructure/messageHandler'
+import { getMsgType } from '@/infrastructure/messageHandlerConstants'
 import { getInstance } from '@/infrastructure/singleton'
 
 class Zoom {
@@ -21,16 +22,16 @@ class Zoom {
 
   init() {
     this.initDom()
-    messageHandler.on(`zoom-init-${this._id}`, this.onInit.bind(this))
-    messageHandler.on(`zoom-in-${this._id}`, this.zoomIn.bind(this))
-    messageHandler.on(`zoom-out-${this._id}`, this.zoomOut.bind(this))
+    messageHandler.on(getMsgType('zoomInit', this._id), this.onInit.bind(this))
+    messageHandler.on(getMsgType('zoomIn', this._id), this.zoomIn.bind(this))
+    messageHandler.on(getMsgType('zoomOut', this._id), this.zoomOut.bind(this))
   }
 
   initDom() {
     this._dom.classList.add('ps-zoom')
     this._dom.style.position = 'absolute'
     this._dom.style.bottom = '10px'
-    this._dom.style.left = '10px'
+    this._dom.style.left = '30px'
 
     const zoomInBtn = createDiv({
       content: '+',
@@ -92,7 +93,7 @@ class Zoom {
     this._zoomDom && (this._zoomDom!.innerText = `${this._zoom}%`)
     this.checkZoomInAble()
     this.checkZoomOutAble()
-    messageHandler.emit(`zoom-change-${this._id}`, { zoom })
+    messageHandler.emit(getMsgType('zoomChange', this._id), { zoom })
   }
 
   getStep() {
@@ -127,13 +128,13 @@ class Zoom {
 
   reset() {
     this.onZoom(this._fixedZoom)
-    messageHandler.emit(`zoom-change-${this._id}`, { zoom: this._fixedZoom })
+    messageHandler.emit(getMsgType('zoomChange', this._id), { zoom: this._fixedZoom })
   }
 
   destroy() {
-    messageHandler.off(`zoom-init-${this._id}`)
-    messageHandler.off(`zoom-in-${this._id}`)
-    messageHandler.off(`zoom-out-${this._id}`)
+    messageHandler.off(getMsgType('zoomInit', this._id))
+    messageHandler.off(getMsgType('zoomIn', this._id))
+    messageHandler.off(getMsgType('zoomOut', this._id))
   }
 }
 

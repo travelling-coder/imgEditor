@@ -1,8 +1,9 @@
 import { createCanvas } from '@/infrastructure/createDom'
-import getRule from './rule'
+import getRule from './components/rule'
 import messageHandler from '@/infrastructure/messageHandler'
 import polyMousemove from '@/infrastructure/polyMousemove'
 import { onMove, onDown, onUp } from './handler/drag'
+import { getMsgType } from '@/infrastructure/messageHandlerConstants'
 
 export class Canvas {
   private _dom: HTMLDivElement
@@ -37,11 +38,11 @@ export class Canvas {
     this._canvas.width = this._dom.clientWidth - this._pending
     this._canvas.height = this._dom.clientHeight - this._pending
 
-    messageHandler.on(`zoom-change-${this._id}`, (data: { zoom: number }) => {
+    messageHandler.on(getMsgType('zoomChange', this._id), (data: { zoom: number }) => {
       this.zoom = data.zoom
       this.drawImage()
     })
-    messageHandler.on(`zero-point-${this._id}`, (data: Position) => {
+    messageHandler.on(getMsgType('zeroPoint', this._id), (data: Position) => {
       this.zeroPoint = data
       this.drawImage()
     })
@@ -51,10 +52,10 @@ export class Canvas {
         return onDown.bind(this)(e, this.zeroPoint)
       },
       onMove: (e, s) => {
-        messageHandler.emit(`zero-point-${this._id}`, onMove(e, s))
+        messageHandler.emit(getMsgType('zeroPoint', this._id), onMove(e, s))
       },
       onUp: (e, s) => {
-        messageHandler.emit(`zero-point-${this._id}`, onUp(e, s))
+        messageHandler.emit(getMsgType('zeroPoint', this._id), onUp(e, s))
       }
     })
   }
