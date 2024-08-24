@@ -110,7 +110,7 @@ class Zoom {
     }
   }
 
-  // 放大
+  // to lager zoom
   zoomIn() {
     if (!this.zoomInAble()) return
     const step = this.getStep()
@@ -118,7 +118,7 @@ class Zoom {
     this.onZoom(newZoom)
   }
 
-  // 缩小
+  // to smaller zoom
   zoomOut() {
     if (!this.zoomOutAble()) return
     const step = this.getStep()

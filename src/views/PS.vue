@@ -10,7 +10,7 @@
 <script lang="ts" setup>
 import { Container } from '@/domain/container'
 import { onMounted, ref } from 'vue'
-import background from '@/assets/test/background.png'
+import background from '@/assets/test/background.jpg'
 
 const id = Math.random().toString(36).substr(2, 9)
 const matting = ref<HTMLDivElement>()

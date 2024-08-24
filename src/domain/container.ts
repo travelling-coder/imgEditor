@@ -28,13 +28,13 @@ export class Container {
     this._dom = dom
     this.setLayout('lr')
 
-    // const preview = this._createDom('ps-preview-canvas')
-    // this._preview = new Canvas(this._id, preview, 'preview', this._pending)
+    const preview = this._createDom('ps-preview-canvas')
+    this._preview = new Canvas(this._id, preview, 'preview', this._pending)
     // const operate = this._createDom('ps-operate-canvas')
     // this._operate = new Canvas(this._id, operate, 'operate', this._pending)
 
     // this._toolbar = getToolBar(this._id, this._createAbsoluteDom())
-    // this._zoom = getZoom(this._id, this._createAbsoluteDom())
+    this._zoom = getZoom(this._id, this._createAbsoluteDom())
 
     const header = this._createDom('ps-header')
     new Hardness(this._id, 50, header)

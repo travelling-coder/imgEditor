@@ -23,7 +23,7 @@ export class Rule {
 
   constructor(id: string, dom: HTMLDivElement, pending: number) {
     this._pending = pending
-    // 垂直标尺
+    // vertical ruler
     this._ruleV = createCanvas({
       className: ['ps-rule-v', 'ps-rule'],
       style: {
@@ -33,7 +33,7 @@ export class Rule {
       },
       attr: { width: this._pending }
     })
-    // 水平标尺
+    // horizontal ruler
     this._ruleH = createCanvas({
       className: ['ps-rule-h', 'ps-rule'],
       style: {
@@ -43,12 +43,12 @@ export class Rule {
       },
       attr: { height: this._pending }
     })
-    // 中间占位
+    // helpline container handle
     this._ruleM = createDiv({
       className: ['ps-rule-m', 'ps-rule'],
       style: { height: `${this._pending}px`, width: `${this._pending}px` }
     })
-    // 辅助线盒子
+    // helpline container
     this._ruleC = createDiv({
       className: ['ps-rule-c', 'ps-rule'],
       style: { height: `${this._pending}px`, width: `${this._pending}px` }
