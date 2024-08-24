@@ -12,6 +12,7 @@ const defaultPending = 30
 
 export class Container {
   private _dom: HTMLDivElement
+  private _content: HTMLDivElement
   private _preview: Canvas
   private _operate: Canvas
   private _id: string
@@ -26,26 +27,32 @@ export class Container {
     this._pending = pending
     dom.className = `${dom.className} ps-container`
     this._dom = dom
-    this.setLayout('lr')
-
-    const preview = this._createDom('ps-preview-canvas')
-    this._preview = new Canvas(this._id, preview, 'preview', this._pending)
-    // const operate = this._createDom('ps-operate-canvas')
-    // this._operate = new Canvas(this._id, operate, 'operate', this._pending)
-
-    // this._toolbar = getToolBar(this._id, this._createAbsoluteDom())
-    this._zoom = getZoom(this._id, this._createAbsoluteDom())
 
     const header = this._createDom('ps-header')
     new Hardness(this._id, 50, header)
 
+    this._content = this._createDom('ps-content')
+
+    const preview = this._createDom('ps-preview-canvas', true, this._content)
+    this._preview = new Canvas(this._id, preview, 'preview', this._pending)
+    const operate = this._createDom('ps-operate-canvas', true, this._content)
+    this._operate = new Canvas(this._id, operate, 'operate', this._pending)
+
+    this._toolbar = getToolBar(this._id, this._createAbsoluteDom())
+    this._zoom = getZoom(this._id, this._createAbsoluteDom())
+
     this._operateManage = getUndoManager(this._id)
     this._shortCutManage = getShortCutManager(this._id, this._dom)
+
+    this.setLayout('lr')
   }
 
-  private _createDom = (className?: string) => {
-    const div = createDiv({ className, style: { flex: '1', backgroundColor: 'white' } })
-    this._dom.appendChild(div)
+  private _createDom = (className?: string, withDefaultStyle?: boolean, dom?: HTMLDivElement) => {
+    const div = createDiv({
+      className,
+      style: withDefaultStyle ? { flex: '1', backgroundColor: 'white' } : {}
+    })
+    ;(dom || this._dom).appendChild(div)
     return div
   }
 
@@ -64,20 +71,18 @@ export class Container {
   }
 
   setLayout(type: 'lr' | 'tb' | 'rl' | 'bt') {
-    this._dom.style.display = 'flex'
-    this._dom.style.overflow = 'hidden'
     switch (type) {
       case 'lr':
-        this._dom.style.flexDirection = 'row'
+        this._content.style.flexDirection = 'row'
         break
       case 'tb':
-        this._dom.style.flexDirection = 'column'
+        this._content.style.flexDirection = 'column'
         break
       case 'rl':
-        this._dom.style.flexDirection = 'row-reverse'
+        this._content.style.flexDirection = 'row-reverse'
         break
       case 'bt':
-        this._dom.style.flexDirection = 'column-reverse'
+        this._content.style.flexDirection = 'column-reverse'
         break
     }
   }
@@ -103,7 +108,10 @@ export class Container {
       const x = Math.floor((canvasWidth - width * scale) / 2)
       const y = Math.floor((canvasHeight - height * scale) / 2)
 
-      messageHandler.emit(getMsgType('zoomInit', this._id), { zoom: Math.floor(scale * 100) })
+      messageHandler.emit(getMsgType('zoomInit', this._id), {
+        zoom: Math.floor(scale * 100),
+        zeroPoint: { x, y }
+      })
       messageHandler.emit(getMsgType('zeroPoint', this._id), { x, y })
 
       this._preview.loadImg(img)

@@ -17,7 +17,6 @@ const matting = ref<HTMLDivElement>()
 const ps = ref<Container>()
 
 const handleChange = (e: any) => {
-  console.log(e.target.files[0])
   const file = e.target.files[0]
   const reader = new FileReader()
   reader.readAsDataURL(file)
@@ -39,6 +38,5 @@ onMounted(() => {
 .ps-box {
   height: 100vh;
   width: 100vw;
-  display: flex;
 }
 </style>

@@ -37,6 +37,26 @@
 
 .ps-container {
     font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    .ps-header {
+        height: 40px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 0 12px;
+        background-color: #fff;
+        width: 100%;
+    }
+
+    .ps-content {
+        flex: 1;
+        display: flex;
+        width: 100%;
+        overflow: hidden;
+    }
 
     .ps-toolbar {
         display: flex;
@@ -130,14 +150,6 @@
             z-index: 9999;
             display: 'none'
         }
-    }
-
-    .ps-header {
-        height: 40px;
-        display: flex;
-        flex-wrap: nowrap;
-        gap: 12px;
-        padding: 0 12px;
     }
 
     .ps-toolbar-item {

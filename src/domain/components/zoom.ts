@@ -13,6 +13,7 @@ class Zoom {
   private _fixedZoom: number = 100
   private _zoomInBtn: HTMLDivElement | undefined
   private _zoomOutBtn: HTMLDivElement | undefined
+  private _zeroPoint: Position = { x: 0, y: 0 }
 
   constructor(id: string, dom: HTMLDivElement) {
     this._dom = dom
@@ -59,8 +60,9 @@ class Zoom {
     this._dom.appendChild(zoomInBtn)
   }
 
-  onInit({ zoom }: { zoom: number }) {
+  onInit({ zoom, zeroPoint }: { zoom: number; zeroPoint: Position }) {
     this._fixedZoom = zoom
+    this._zeroPoint = zeroPoint
     this.onZoom(zoom)
   }
 
@@ -129,6 +131,7 @@ class Zoom {
   reset() {
     this.onZoom(this._fixedZoom)
     messageHandler.emit(getMsgType('zoomChange', this._id), { zoom: this._fixedZoom })
+    messageHandler.emit(getMsgType('zeroPoint', this._id), this._zeroPoint)
   }
 
   destroy() {
