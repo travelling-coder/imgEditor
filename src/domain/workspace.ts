@@ -1,5 +1,5 @@
 import { Canvas } from './canvas'
-import getShortCutManager from './scheduler/shortCutManager'
+import getSortCutManager from './scheduler/sortCutManager'
 import getUndoManager from './scheduler/undoManager'
 import getToolBar from './components/toolbar'
 import getZoom from './components/zoom'
@@ -10,14 +10,14 @@ import { Hardness } from './components/hardness'
 
 const defaultPending = 30
 
-export class Container {
+export class Workspace {
   private _dom: HTMLDivElement
   private _content: HTMLDivElement
   private _preview: Canvas
   private _operate: Canvas
   private _id: string
   private _operateManage: ReturnType<typeof getUndoManager>
-  private _shortCutManage: ReturnType<typeof getShortCutManager>
+  private _shortCutManage: ReturnType<typeof getSortCutManager>
   private _toolbar: ReturnType<typeof getToolBar>
   private _zoom: ReturnType<typeof getZoom>
   private _pending: number
@@ -42,7 +42,7 @@ export class Container {
     this._zoom = getZoom(this._id, this._createAbsoluteDom())
 
     this._operateManage = getUndoManager(this._id)
-    this._shortCutManage = getShortCutManager(this._id, this._dom)
+    this._shortCutManage = getSortCutManager({}).bindDom(id, dom)
 
     this.setLayout('lr')
   }

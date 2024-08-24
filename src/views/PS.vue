@@ -8,13 +8,12 @@
 </template>
 
 <script lang="ts" setup>
-import { Container } from '@/domain/container'
 import { onMounted, ref } from 'vue'
 import background from '@/assets/test/background.jpg'
+import { Container } from '@/domain/conatiner'
 
-const id = Math.random().toString(36).substr(2, 9)
 const matting = ref<HTMLDivElement>()
-const ps = ref<Container>()
+const ps = ref<ReturnType<InstanceType<typeof Container>['createWorkspace']>>()
 
 const handleChange = (e: any) => {
   const file = e.target.files[0]
@@ -29,7 +28,7 @@ const handleChange = (e: any) => {
 }
 
 onMounted(() => {
-  ps.value = new Container(matting.value!, id)
+  ps.value = new Container(matting.value!).createWorkspace()
   ps.value.initWorkspace(background)
 })
 </script>
