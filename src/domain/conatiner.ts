@@ -1,5 +1,7 @@
 import { Workspace } from './workspace'
 import getSortCutManager from './scheduler/sortCutManager'
+import messageHandler from '@/infrastructure/messageHandler'
+import { getSortCutMsgType } from '@/infrastructure/messageHandlerConstants'
 
 const keyboardSortCuts: KeyboardSortCut[] = [
   {
@@ -7,6 +9,24 @@ const keyboardSortCuts: KeyboardSortCut[] = [
     type: 'keydown',
     callback: (event, id) => {
       console.log('c down', id)
+    }
+  },
+  {
+    key: '=',
+    type: 'keydown',
+    callback: (event, id) => {
+      console.log(id)
+
+      messageHandler.emit(getSortCutMsgType('hardnessIn', id))
+    }
+  },
+  {
+    key: '-',
+    type: 'keydown',
+    callback: (event, id) => {
+      console.log(id)
+
+      messageHandler.emit(getSortCutMsgType('hardnessOut', id))
     }
   },
   {

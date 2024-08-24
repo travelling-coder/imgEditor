@@ -31,6 +31,7 @@ export class Slider {
       position: 'bottom'
     })
 
+    this.updateClassValue(value)
     this._handler.addEventListener('mouseenter', this.checkValue)
 
     polyMousemove(this._dom, {
@@ -52,11 +53,15 @@ export class Slider {
     this._tooltip.updateContent(this.value.toString())
   }
 
-  updateValue(value: number) {
+  updateClassValue(value: number) {
     this._handler.style.left = `${value}%`
     this.value = value
-    this._onChange(value)
     this.checkValue()
+  }
+
+  updateValue(value: number) {
+    this.updateClassValue(value)
+    this._onChange(value)
   }
 
   updateByEvent(event: MouseEvent) {
