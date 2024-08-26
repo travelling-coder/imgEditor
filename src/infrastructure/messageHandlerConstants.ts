@@ -11,7 +11,11 @@ const messageHandlerConstants = {
 
   hardnessChange: 'hardness-change',
   hardnessIn: 'hardness-in',
-  hardnessOut: 'hardness-out'
+  hardnessOut: 'hardness-out',
+
+  radiusChange: 'radius-change',
+  radiusIn: 'radius-in',
+  radiusOut: 'radius-out'
 }
 
 export const getMsgType = (key: keyof typeof messageHandlerConstants | string, id?: string) => {

@@ -159,10 +159,10 @@ export class Rule {
     const ctx = type === 'h' ? this._ruleH.getContext('2d')! : this._ruleV.getContext('2d')!
     const end = this._pending * 0.7
     const endPoint = type === 'h' ? { x: p.x, y: end } : { x: end, y: p.y }
-    const textPoint = type === 'h' ? { x: p.x, y: end - 2 } : { x: end - 2, y: p.y }
+    const textPoint = type === 'h' ? { x: p.x, y: end } : { x: end - 2, y: p.y }
 
     ctxDrawLine(ctx, p, endPoint, this._color)
-    ctxDrawText(ctx, text, textPoint, this._color)
+    ctxDrawText(ctx, text, textPoint, this._color, type)
   }
 
   getMarks(total: number, start: number) {

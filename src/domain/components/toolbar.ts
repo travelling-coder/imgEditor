@@ -38,9 +38,9 @@ class Toolbar {
   private _dom: HTMLDivElement
   private _basicIconUrl: string
   private _options: ToolbarOptions[]
-  private _domList: HTMLDivElement[] = []
   private _activeOption: string | null = null
   private _id: string
+  private _domMap: Map<string, HTMLDivElement> = new Map()
 
   constructor(
     id: string,
@@ -55,9 +55,6 @@ class Toolbar {
       ...option,
       icon: `${this._basicIconUrl}${option.icon}.svg`
     }))
-    this._activeOption =
-      localStorage.getItem(localStorageToolbarKey) ||
-      options.filter((item) => !item.unActiveAble)[0].type
     this.init()
   }
 
@@ -68,43 +65,40 @@ class Toolbar {
 
   initDom() {
     this._dom.classList.add('ps-toolbar')
-    this._dom.style.position = 'absolute'
-    this._dom.style.top = '30px'
-    this._dom.style.left = '30px'
   }
 
   private async createOptionDom(option: ToolbarOptions) {
     const { type, icon, title, unActiveAble } = option
 
     const div = createDiv({
-      className: type,
-      title,
+      className: [type, 'ps-toolbar-item'],
       children: [await createSvg(icon)],
       style: { flexBasis: '30px' },
       onClick: () => {
-        !unActiveAble && this.onClick(div, type)
+        !unActiveAble && this.pick(type)
         this.emitToolbarEvent(type)
-      }
+      },
+      title
     })
     this._dom.appendChild(div)
-    this._domList.push(div)
-    if (type === this._activeOption) {
-      this.onClick(div, type)
-    }
+    this._domMap.set(type, div)
   }
 
   async initOptions() {
     for (let option of this._options) {
-      this.createOptionDom(option)
+      await this.createOptionDom(option)
     }
+    this.pick(
+      localStorage.getItem(localStorageToolbarKey) ||
+        this._options.filter((item) => !item.unActiveAble)[0].type
+    )
   }
 
-  onClick(div: HTMLDivElement, type: string) {
+  pick(type: string) {
+    if (this._activeOption === type) return
+    this._activeOption && this._domMap.get(this._activeOption)?.classList.remove('active')
     this._activeOption = type
-    this._domList.forEach((item) => {
-      item.classList.remove('active')
-    })
-    div.classList.add('active')
+    this._domMap.get(type)?.classList.add('active')
   }
 
   emitToolbarEvent(type: ToolbarType) {

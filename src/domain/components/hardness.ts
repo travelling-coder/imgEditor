@@ -30,8 +30,6 @@ export class Hardness {
         children: this._label ? [titleDom, this._label, sliderDom] : [titleDom, sliderDom]
       })
     )
-    messageHandler.on(getSortCutMsgType('hardnessIn', this._id), this.hardnessIn.bind(this))
-    messageHandler.on(getSortCutMsgType('hardnessOut', this._id), this.hardnessOut.bind(this))
   }
 
   hardnessIn() {

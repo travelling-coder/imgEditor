@@ -1,7 +1,8 @@
-import { createDiv } from '@/infrastructure/createDom'
+import { createDiv, createSpan } from '@/infrastructure/createDom'
 import messageHandler from '@/infrastructure/messageHandler'
 import { getMsgType, getSortCutMsgType } from '@/infrastructure/messageHandlerConstants'
 import { getInstance } from '@/infrastructure/singleton'
+import { Tooltip } from '@/infrastructure/tooltip'
 
 class Zoom {
   private _dom: HTMLDivElement
@@ -14,6 +15,7 @@ class Zoom {
   private _zoomInBtn: HTMLDivElement | undefined
   private _zoomOutBtn: HTMLDivElement | undefined
   private _zeroPoint: Position = { x: 0, y: 0 }
+  private _currentZoom: HTMLSpanElement | undefined
 
   constructor(id: string, dom: HTMLDivElement) {
     this._dom = dom
@@ -33,26 +35,25 @@ class Zoom {
 
   initDom() {
     this._dom.classList.add('ps-zoom')
-    this._dom.style.position = 'absolute'
-    this._dom.style.bottom = '10px'
-    this._dom.style.left = '30px'
+
+    this._currentZoom = createSpan({ content: `${this._zoom}%` })
 
     const zoomInBtn = createDiv({
       content: '+',
       style: { display: 'flex', justifyContent: 'center' },
       onClick: this.zoomIn.bind(this),
-      attr: { title: '放大' }
+      title: 'zoom in'
     })
     const zoomOutBtn = createDiv({
       content: '-',
       style: { display: 'flex', justifyContent: 'center' },
       onClick: this.zoomOut.bind(this),
-      attr: { title: '缩小' }
+      title: 'zoom out'
     })
     const zoomDom = createDiv({
-      content: `${this._zoom}%`,
+      content: this._currentZoom,
       onClick: this.reset.bind(this),
-      attr: { title: '还原尺寸' }
+      title: 'reset zoom'
     })
     this._zoomDom = zoomDom
     this._zoomInBtn = zoomInBtn
@@ -95,7 +96,7 @@ class Zoom {
 
   onZoom(zoom: number) {
     this._zoom = zoom
-    this._zoomDom && (this._zoomDom!.innerText = `${this._zoom}%`)
+    this._currentZoom && (this._currentZoom!.innerText = `${this._zoom}%`)
     this.checkZoomInAble()
     this.checkZoomOutAble()
     messageHandler.emit(getMsgType('zoomChange', this._id), { zoom })

@@ -7,8 +7,9 @@ import { createDiv } from '@/infrastructure/createDom'
 import messageHandler from '@/infrastructure/messageHandler'
 import { getMsgType } from '@/infrastructure/messageHandlerConstants'
 import { Hardness } from './components/hardness'
+import Header from './header'
 
-const defaultPending = 30
+const defaultPending = 20
 
 export class Workspace {
   private _dom: HTMLDivElement
@@ -21,6 +22,7 @@ export class Workspace {
   private _toolbar: ReturnType<typeof getToolBar>
   private _zoom: ReturnType<typeof getZoom>
   private _pending: number
+  private _header: Header
 
   constructor(dom: HTMLDivElement, id: string, pending = defaultPending) {
     this._id = id
@@ -28,17 +30,13 @@ export class Workspace {
     dom.className = `${dom.className} ps-container`
     this._dom = dom
 
-    const header = this._createDom('ps-header')
-    new Hardness(this._id, 0, header)
-
+    this._header = new Header(this._id, this._createDom('ps-header'))
     this._content = this._createDom('ps-content')
-
     const preview = this._createDom('ps-preview-canvas', true, this._content)
     this._preview = new Canvas(this._id, preview, 'preview', this._pending)
     const operate = this._createDom('ps-operate-canvas', true, this._content)
     this._operate = new Canvas(this._id, operate, 'operate', this._pending)
 
-    // this._toolbar = getToolBar(this._id, this._createAbsoluteDom())
     this._zoom = getZoom(this._id, this._createAbsoluteDom())
 
     this._operateManage = getUndoManager(this._id)

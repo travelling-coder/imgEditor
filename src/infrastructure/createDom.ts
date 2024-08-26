@@ -1,3 +1,5 @@
+import { Tooltip } from './tooltip'
+
 interface CreateDomParams {
   className?: string | string[]
   style?: Partial<CSSStyleDeclaration>
@@ -28,7 +30,10 @@ const readParams = <T extends HTMLElement>(dom: T, params: CreateDomParams = {})
       dom.appendChild(content)
     }
   }
-  title && (dom.title = title)
+  if (title) {
+    dom.classList.add('tooltip-container')
+    new Tooltip(dom as unknown as HTMLDivElement, title, { position: 'bottom' })
+  }
   children && children.forEach((child) => dom.appendChild(child))
   onClick && dom.addEventListener('click', onClick)
   attr && Object.keys(attr).forEach((key) => dom.setAttribute(key, attr[key] as string))

@@ -24,7 +24,7 @@ export class Tooltip {
     private _content: string | HTMLElement,
     _config: TooltipConfig = {}
   ) {
-    const { position = 'top', delay = 1000, withMouse } = _config
+    const { position = 'top', delay = 0, withMouse } = _config
     this._withMouse = withMouse || false
     this._delay = delay
 
@@ -36,7 +36,20 @@ export class Tooltip {
       content: _content
     })
 
-    this._dom.appendChild(this._tooltip)
+    this._dom.appendChild(
+      createDiv({
+        style: {
+          width: '100%',
+          height: '100%',
+          position: 'absolute',
+          userSelect: 'none',
+          pointerEvents: 'none'
+        },
+        children: [this._tooltip]
+      })
+    )
+
+    // this._dom.appendChild(this._tooltip)
 
     this._dom.addEventListener('mouseenter', this.onEnter.bind(this))
     this._tooltip.addEventListener('mouseenter', this.onEnter.bind(this))

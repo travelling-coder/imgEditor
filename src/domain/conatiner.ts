@@ -50,6 +50,20 @@ const keyboardSortCuts: KeyboardSortCut[] = [
     }
   },
   {
+    key: '[',
+    type: 'keydown',
+    callback: (event, id) => {
+      messageHandler.emit(getSortCutMsgType('radiusOut', id))
+    }
+  },
+  {
+    key: ']',
+    type: 'keydown',
+    callback: (event, id) => {
+      messageHandler.emit(getSortCutMsgType('radiusIn', id))
+    }
+  },
+  {
     key: 'c',
     type: 'keyup',
     callback: (event, id) => {

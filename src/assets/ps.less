@@ -1,12 +1,11 @@
 .base-container {
-    background-color: var(--background-color);
-    padding: 4px;
+    padding: 4px 0;
     border-radius: 8px;
+    gap: 12px;
 
     &>* {
         min-width: 30px;
         height: 30px;
-        margin: 8px;
         color: var(--default-color);
         background-color: var(--default-background-color);
         padding: 4px;
@@ -50,6 +49,34 @@
         background-color: #fff;
         width: 100%;
         z-index: 2;
+
+        .ps-toolbar {
+            display: flex;
+            justify-content: space-between;
+            .base-container();
+
+            .ps-toolbar-item {
+                svg {
+                    width: 100%;
+                }
+            }
+        }
+
+        .ps-zoom {
+            display: flex;
+            user-select: none;
+            z-index: 4;
+            .base-container();
+
+            .ps-zoom-disabled {
+                cursor: no-drop;
+                user-select: none;
+
+                color: var(--disable-color);
+                background-color: var(--disable-background-color);
+                border-color: var(--disable-border-color);
+            }
+        }
     }
 
     .ps-content {
@@ -58,31 +85,6 @@
         width: 100%;
         overflow: hidden;
         z-index: 1;
-    }
-
-    .ps-toolbar {
-        display: flex;
-        width: 100px;
-        flex-flow: row wrap;
-        justify-content: space-between;
-        z-index: 3;
-        .base-container();
-    }
-
-    .ps-zoom {
-        display: flex;
-        user-select: none;
-        z-index: 4;
-        .base-container();
-
-        .ps-zoom-disabled {
-            cursor: no-drop;
-            user-select: none;
-
-            color: var(--disable-color);
-            background-color: var(--disable-background-color);
-            border-color: var(--disable-border-color);
-        }
     }
 
     .ps-canvas-container {
@@ -211,6 +213,9 @@
     }
 }
 
+.tooltip-container {
+    position: relative;
+}
 
 .tooltip {
     position: absolute;
@@ -221,6 +226,11 @@
     padding: 8px;
     border-radius: 4px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 999;
+    max-width: 200px;
+    word-break: keep-all;
+    white-space: normal;
+    overflow-wrap: break-word;
 
     &.tooltip-top {
         transform: translate(-50%, -100%);
@@ -241,7 +251,9 @@
     }
 
     &.tooltip-bottom {
-        transform: translate(-50%, 100%);
+        transform: translate(-50%, 8px);
+        top: 100%;
+        left: 50%;
 
         &::before {
             content: "";
