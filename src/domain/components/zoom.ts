@@ -6,7 +6,7 @@ import { getInstance } from '@/infrastructure/singleton'
 class Zoom {
   private _dom: HTMLDivElement
   private _id: string
-  private _maxZoom = 300
+  private _maxZoom = 1000
   private _minZoom = 10
   private _zoom: number = 100
   private _zoomDom: HTMLDivElement | undefined

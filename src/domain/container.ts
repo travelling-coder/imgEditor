@@ -88,32 +88,34 @@ const keyboardSortCuts: KeyboardSortCut[] = [
   }
 ]
 const mouseSortCuts: MouseSortCut[] = [
-  {
-    key: 'left',
-    callback: (event, id) => {
-      console.log('left mouse dom', id)
-    }
-  },
-  {
-    key: 'left',
-    win: true,
-    callback: (event, id) => {
-      console.log('left mouse win', id)
-    }
-  }
+  // {
+  //   key: 'left',
+  //   callback: (event, id) => {
+  //     console.log('left mouse dom', id)
+  //   }
+  // },
+  // {
+  //   key: 'left',
+  //   win: true,
+  //   callback: (event, id) => {
+  //     console.log('left mouse win', id)
+  //   }
+  // }
 ]
 
 const wheelSortCuts: WheelSortCut[] = [
   {
     key: 'wheel-up',
+    ctrl: true,
     callback: (event, id) => {
-      console.log('wheel-up', id)
+      messageHandler.emit(getSortCutMsgType('zoomIn', id))
     }
   },
   {
     key: 'wheel-down',
+    ctrl: true,
     callback: (event, id) => {
-      console.log('wheel-down', id)
+      messageHandler.emit(getSortCutMsgType('zoomOut', id))
     }
   }
 ]

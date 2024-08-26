@@ -75,14 +75,20 @@ class SortCutManager {
     const eventKey = event.button === 0 ? 'left' : event.button === 2 ? 'right' : 'wheel'
     const key = `${win ? 'win' : 'dom'}-${event.ctrlKey}-${event.shiftKey}-${event.altKey}-${eventKey}`
     const sortCut = this._eventMap.get(key) as MouseSortCut
-    sortCut && sortCut.callback(event, this._id)
+    if (sortCut) {
+      sortCut.callback(event, this._id)
+      preventDefault(event)
+    }
   }
 
   onWheel(win: boolean, event: WheelEvent) {
-    const eventKey = event.deltaY > 0 ? 'wheel-up' : 'wheel-down'
+    const eventKey = event.deltaY > 0 ? 'wheel-down' : 'wheel-up'
     const key = `${win ? 'win' : 'dom'}-${event.ctrlKey}-${event.shiftKey}-${event.altKey}-${eventKey}`
     const sortCut = this._eventMap.get(key) as WheelSortCut
-    sortCut && sortCut.callback(event, this._id)
+    if (sortCut) {
+      sortCut.callback(event, this._id)
+      preventDefault(event)
+    }
   }
 
   bindDom(id: string, dom: HTMLElement) {
