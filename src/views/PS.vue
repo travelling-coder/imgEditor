@@ -10,7 +10,7 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
 import background from '@/assets/test/background.jpg'
-import { Container } from '@/domain/conatiner'
+import { Container } from '@/domain/container'
 
 const matting = ref<HTMLDivElement>()
 const ps = ref<ReturnType<InstanceType<typeof Container>['createWorkspace']>>()
