@@ -2,7 +2,6 @@ import { createDiv, createSpan } from '@/infrastructure/createDom'
 import messageHandler from '@/infrastructure/messageHandler'
 import { getMsgType, getSortCutMsgType } from '@/infrastructure/messageHandlerConstants'
 import { getInstance } from '@/infrastructure/singleton'
-import { Tooltip } from '@/infrastructure/tooltip'
 
 class Zoom {
   private _dom: HTMLDivElement

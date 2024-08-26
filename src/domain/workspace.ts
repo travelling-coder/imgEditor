@@ -6,7 +6,6 @@ import getZoom from './components/zoom'
 import { createDiv } from '@/infrastructure/createDom'
 import messageHandler from '@/infrastructure/messageHandler'
 import { getMsgType } from '@/infrastructure/messageHandlerConstants'
-import { Hardness } from './components/hardness'
 import Header from './header'
 
 const defaultPending = 20

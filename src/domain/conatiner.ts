@@ -64,6 +64,22 @@ const keyboardSortCuts: KeyboardSortCut[] = [
     }
   },
   {
+    key: '[',
+    ctrl: true,
+    type: 'keydown',
+    callback: (event, id) => {
+      messageHandler.emit(getSortCutMsgType('opacityOut', id))
+    }
+  },
+  {
+    key: ']',
+    ctrl: true,
+    type: 'keydown',
+    callback: (event, id) => {
+      messageHandler.emit(getSortCutMsgType('opacityIn', id))
+    }
+  },
+  {
     key: 'c',
     type: 'keyup',
     callback: (event, id) => {
