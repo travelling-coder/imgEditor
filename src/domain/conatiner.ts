@@ -15,18 +15,38 @@ const keyboardSortCuts: KeyboardSortCut[] = [
     key: '=',
     type: 'keydown',
     callback: (event, id) => {
-      console.log(id)
-
       messageHandler.emit(getSortCutMsgType('hardnessIn', id))
+    }
+  },
+  {
+    key: '=',
+    ctrl: true,
+    type: 'keydown',
+    callback: (event, id) => {
+      messageHandler.emit(getSortCutMsgType('zoomIn', id))
+    }
+  },
+  {
+    key: '0',
+    ctrl: true,
+    type: 'keydown',
+    callback: (event, id) => {
+      messageHandler.emit(getSortCutMsgType('zoomReset', id))
     }
   },
   {
     key: '-',
     type: 'keydown',
     callback: (event, id) => {
-      console.log(id)
-
       messageHandler.emit(getSortCutMsgType('hardnessOut', id))
+    }
+  },
+  {
+    key: '-',
+    ctrl: true,
+    type: 'keydown',
+    callback: (event, id) => {
+      messageHandler.emit(getSortCutMsgType('zoomOut', id))
     }
   },
   {

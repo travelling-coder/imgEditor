@@ -29,7 +29,7 @@ const handleChange = (e: any) => {
 
 onMounted(() => {
   ps.value = new Container(matting.value!).createWorkspace()
-  ps.value.initWorkspace(background)
+  // ps.value.initWorkspace(background)
 })
 </script>
 

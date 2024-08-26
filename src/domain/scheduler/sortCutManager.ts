@@ -2,16 +2,16 @@ import { preventDefault } from '@/infrastructure/helper'
 import { getInstance } from '@/infrastructure/singleton'
 
 const genKeyboardKey = (sortCut: Omit<KeyboardSortCut, 'callback'>) =>
-  `${sortCut.ctl ? true : false}-${sortCut.shift ? true : false}-${sortCut.alt ? true : false}-${sortCut.key}${(sortCut as KeyboardSortCut).type ? `-${(sortCut as KeyboardSortCut).type}` : ''}`
+  `${sortCut.ctrl ? true : false}-${sortCut.shift ? true : false}-${sortCut.alt ? true : false}-${sortCut.key}${(sortCut as KeyboardSortCut).type ? `-${(sortCut as KeyboardSortCut).type}` : ''}`
 
 const genMouseKey = (sortCut: Omit<MouseSortCut, 'callback'>) =>
-  `${sortCut.win ? 'win' : 'dom'}-${sortCut.ctl ? true : false}-${sortCut.shift ? true : false}-${sortCut.alt ? true : false}-${sortCut.key}${(sortCut as KeyboardSortCut).type ? `-${(sortCut as KeyboardSortCut).type}` : ''}`
+  `${sortCut.win ? 'win' : 'dom'}-${sortCut.ctrl ? true : false}-${sortCut.shift ? true : false}-${sortCut.alt ? true : false}-${sortCut.key}${(sortCut as KeyboardSortCut).type ? `-${(sortCut as KeyboardSortCut).type}` : ''}`
 
 const genWheelKey = (sortCut: Omit<WheelSortCut, 'callback'>) =>
-  `${sortCut.win ? 'win' : 'dom'}-${sortCut.ctl ? true : false}-${sortCut.shift ? true : false}-${sortCut.alt ? true : false}-${sortCut.key}${(sortCut as KeyboardSortCut).type ? `-${(sortCut as KeyboardSortCut).type}` : ''}`
+  `${sortCut.win ? 'win' : 'dom'}-${sortCut.ctrl ? true : false}-${sortCut.shift ? true : false}-${sortCut.alt ? true : false}-${sortCut.key}${(sortCut as KeyboardSortCut).type ? `-${(sortCut as KeyboardSortCut).type}` : ''}`
 
 const genPreventKey = (sortCut: Omit<SortCut, 'callback'>) =>
-  `${sortCut.ctl ? true : false}-${sortCut.shift ? true : false}-${sortCut.alt ? true : false}-${sortCut.key}`
+  `${sortCut.ctrl ? true : false}-${sortCut.shift ? true : false}-${sortCut.alt ? true : false}-${sortCut.key}`
 
 class SortCutManager {
   private _eventMap = new Map<string, SortCut>()

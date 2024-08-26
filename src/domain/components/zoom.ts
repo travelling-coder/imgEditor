@@ -1,6 +1,6 @@
 import { createDiv } from '@/infrastructure/createDom'
 import messageHandler from '@/infrastructure/messageHandler'
-import { getMsgType } from '@/infrastructure/messageHandlerConstants'
+import { getMsgType, getSortCutMsgType } from '@/infrastructure/messageHandlerConstants'
 import { getInstance } from '@/infrastructure/singleton'
 
 class Zoom {
@@ -26,6 +26,9 @@ class Zoom {
     messageHandler.on(getMsgType('zoomInit', this._id), this.onInit.bind(this))
     messageHandler.on(getMsgType('zoomIn', this._id), this.zoomIn.bind(this))
     messageHandler.on(getMsgType('zoomOut', this._id), this.zoomOut.bind(this))
+    messageHandler.on(getSortCutMsgType('zoomReset', this._id), this.reset.bind(this))
+    messageHandler.on(getSortCutMsgType('zoomIn', this._id), this.zoomIn.bind(this))
+    messageHandler.on(getSortCutMsgType('zoomOut', this._id), this.zoomOut.bind(this))
   }
 
   initDom() {
@@ -124,8 +127,13 @@ class Zoom {
   zoomOut() {
     if (!this.zoomOutAble()) return
     const step = this.getStep()
-    const newZoom = Math.floor(this._zoom / step) * step - step
-    this.onZoom(newZoom)
+    if (this._zoom % step === 0) {
+      this.onZoom(this._zoom - step)
+    } else {
+      this.onZoom(this._zoom - (this._zoom % step))
+    }
+    // const newZoom = Math.floor(this._zoom / step) * step - step
+    // this.onZoom(newZoom)
   }
 
   reset() {

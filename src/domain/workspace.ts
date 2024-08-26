@@ -33,10 +33,10 @@ export class Workspace {
 
     this._content = this._createDom('ps-content')
 
-    // const preview = this._createDom('ps-preview-canvas', true, this._content)
-    // this._preview = new Canvas(this._id, preview, 'preview', this._pending)
-    // const operate = this._createDom('ps-operate-canvas', true, this._content)
-    // this._operate = new Canvas(this._id, operate, 'operate', this._pending)
+    const preview = this._createDom('ps-preview-canvas', true, this._content)
+    this._preview = new Canvas(this._id, preview, 'preview', this._pending)
+    const operate = this._createDom('ps-operate-canvas', true, this._content)
+    this._operate = new Canvas(this._id, operate, 'operate', this._pending)
 
     // this._toolbar = getToolBar(this._id, this._createAbsoluteDom())
     this._zoom = getZoom(this._id, this._createAbsoluteDom())

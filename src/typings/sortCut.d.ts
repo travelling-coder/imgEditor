@@ -3,7 +3,7 @@ type MouseSortCutCallback = (event: MouseEvent, id: string) => void
 type WheelSortCutCallback = (event: WheelEvent, id: string) => void
 
 interface SortCutBase {
-  ctl?: boolean
+  ctrl?: boolean
   shift?: boolean
   alt?: boolean
   key: 'left' | 'right' | 'wheel' | 'wheel-up' | 'wheel-down' | string
