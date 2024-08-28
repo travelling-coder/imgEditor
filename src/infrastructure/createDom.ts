@@ -1,3 +1,4 @@
+import { getInstance, getInstanceAsync } from './singleton'
 import { Tooltip } from './tooltip'
 
 interface CreateDomParams {
@@ -51,9 +52,11 @@ export const createCanvas = (params?: CreateDomParams) => {
 }
 
 export const createSvg = async (src: string) => {
-  const module = (await import(/* @vite-ignore */ src)).default
-  const svgDoc = parser.parseFromString(await (await fetch(module)).text(), 'image/svg+xml')
-  return svgDoc.documentElement
+  return getInstanceAsync(src, async () => {
+    const module = (await import(/* @vite-ignore */ src)).default
+    const svgDoc = parser.parseFromString(await (await fetch(module)).text(), 'image/svg+xml')
+    return svgDoc.documentElement
+  })
 }
 
 export const createSpan = (params?: CreateDomParams) => {

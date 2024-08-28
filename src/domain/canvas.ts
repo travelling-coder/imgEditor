@@ -3,7 +3,8 @@ import getRule from './components/rule'
 import messageHandler from '@/infrastructure/messageHandler'
 import polyMousemove from '@/infrastructure/polyMousemove'
 import { onMove, onDown, onUp } from './handler/drag'
-import { getMsgType } from '@/infrastructure/messageHandlerConstants'
+import { getMsgType, getSortCutMsgType } from '@/infrastructure/messageHandlerConstants'
+import Cursor from './components/cursor'
 
 export class Canvas {
   private _dom: HTMLDivElement
@@ -15,6 +16,8 @@ export class Canvas {
 
   private _rule: ReturnType<typeof getRule>
   private _pending: number
+  private _dragging: boolean = false
+  private _dragEndCb: VoidFunction | null = null
   zoom: number = 100
   zeroPoint: Position = { x: 0, y: 0 }
   img: HTMLImageElement | null = null
@@ -31,6 +34,7 @@ export class Canvas {
     this._ctx = this._canvas.getContext('2d')!
     this._dom.appendChild(this._canvas)
     this._rule = getRule(`${id}`, this._dom, type, this._pending)
+    new Cursor(id, dom, { color: '', radius: 5, hardness: 0, opacity: 0 })
     setTimeout(this.initCanvas.bind(this))
   }
 
@@ -47,17 +51,38 @@ export class Canvas {
       this.drawImage()
     })
 
-    polyMousemove(this._canvas, {
-      onDown: (e) => {
-        return onDown.bind(this)(e, this.zeroPoint)
-      },
-      onMove: (e, s) => {
-        messageHandler.emit(getMsgType('zeroPoint', this._id), onMove(e, s))
-      },
-      onUp: (e, s) => {
-        messageHandler.emit(getMsgType('zeroPoint', this._id), onUp(e, s))
-      }
-    })
+    messageHandler.on(
+      getSortCutMsgType('start-drag', this._id),
+      this.updateDragStatus.bind(this, true)
+    )
+
+    messageHandler.on(
+      getSortCutMsgType('end-drag', this._id),
+      this.updateDragStatus.bind(this, false)
+    )
+  }
+
+  updateDragStatus(start = true) {
+    if (this._dragging === start) {
+      return
+    } else if (start) {
+      document.body.classList.add('dragable')
+      this._dragEndCb = polyMousemove(this._canvas, {
+        onDown: (e) => {
+          return onDown.bind(this)(e, this.zeroPoint)
+        },
+        onMove: (e, s) => {
+          messageHandler.emit(getMsgType('zeroPoint', this._id), onMove(e, s))
+        },
+        onUp: (e, s) => {
+          messageHandler.emit(getMsgType('zeroPoint', this._id), onUp(e, s))
+        }
+      })
+    } else {
+      document.body.classList.remove('dragable')
+      this._dragEndCb?.()
+    }
+    this._dragging = start
   }
 
   canvas() {

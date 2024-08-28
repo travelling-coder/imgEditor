@@ -18,19 +18,22 @@ export default class Header {
   ) {
     this._toolbar = getToolBar(this._id, header.appendChild(createDiv()))
     this._zoom = getZoom(this._id, header.appendChild(createDiv()))
-    // this._hardness = new Hardness(this._id, 0, header)
-    // this._radius = new Radius(this._id, 0, header)
-    // this._opacity = new Opacity(this._id, 100, header)
 
     this._hardness = new HeaderSlider(this._id, 0, header, {
       showLabel: true,
       eventKey: 'hardnessChange',
       title: '硬度'
     })
-    this._radius = new HeaderSlider(this._id, 0, header, {
+    this._radius = new HeaderSlider(this._id, 10, header, {
       showLabel: true,
       eventKey: 'radiusChange',
-      title: '半径'
+      title: '半径',
+      format(val) {
+        return val * 5 || 5
+      },
+      parse(val) {
+        return val / 5
+      }
     })
     this._opacity = new HeaderSlider(this._id, 0, header, {
       showLabel: true,

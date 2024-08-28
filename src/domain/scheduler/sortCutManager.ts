@@ -46,6 +46,7 @@ class SortCutManager {
     window.addEventListener('keyup', this.onKeyup.bind(this), true)
     window.addEventListener('mousedown', this.onMouse.bind(this, true), true)
     window.addEventListener('wheel', this.onWheel.bind(this, true), true)
+    window.addEventListener('contextmenu', this.onContextMenu.bind(this, true))
   }
 
   onKeyboard(event: KeyboardEvent, type: 'keydown' | 'keyup' | 'keypress') {
@@ -91,11 +92,21 @@ class SortCutManager {
     }
   }
 
+  onContextMenu(win: boolean, event: MouseEvent) {
+    const key = `${win ? 'win' : 'dom'}-${event.ctrlKey}-${event.shiftKey}-${event.altKey}-contextmenu`
+    const sortCut = this._eventMap.get(key) as MouseSortCut
+    if (sortCut) {
+      sortCut.callback(event, this._id)
+      preventDefault(event)
+    }
+  }
+
   bindDom(id: string, dom: HTMLElement) {
     this._id = id
     if (!this._domMap.has(id)) {
       dom.addEventListener('mousedown', this.onMouse.bind(this, false))
       dom.addEventListener('wheel', this.onWheel.bind(this, false))
+      dom.addEventListener('contextmenu', this.onContextMenu.bind(this, false))
     }
     return this
   }
@@ -105,6 +116,7 @@ class SortCutManager {
     if (!dom) return
     dom.removeEventListener('mousedown', this.onMouse.bind(this, false))
     dom.removeEventListener('wheel', this.onWheel.bind(this, false))
+    dom.removeEventListener('contextmenu', this.onContextMenu.bind(this, false))
     this._domMap.delete(id)
     return this
   }
@@ -118,6 +130,7 @@ class SortCutManager {
     window.removeEventListener('keyup', this.onKeyup.bind(this), true)
     window.removeEventListener('mousedown', this.onMouse.bind(this, true), true)
     window.removeEventListener('wheel', this.onWheel.bind(this, true), true)
+    window.addEventListener('contextmenu', this.onContextMenu.bind(this, true))
   }
 }
 

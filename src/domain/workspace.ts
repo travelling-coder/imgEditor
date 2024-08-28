@@ -1,8 +1,6 @@
 import { Canvas } from './canvas'
 import getSortCutManager from './scheduler/sortCutManager'
 import getUndoManager from './scheduler/undoManager'
-import getToolBar from './components/toolbar'
-import getZoom from './components/zoom'
 import { createDiv } from '@/infrastructure/createDom'
 import messageHandler from '@/infrastructure/messageHandler'
 import { getMsgType } from '@/infrastructure/messageHandlerConstants'
@@ -16,12 +14,10 @@ export class Workspace {
   private _preview: Canvas
   private _operate: Canvas
   private _id: string
-  private _operateManage: ReturnType<typeof getUndoManager>
-  private _shortCutManage: ReturnType<typeof getSortCutManager>
-  private _toolbar: ReturnType<typeof getToolBar>
-  private _zoom: ReturnType<typeof getZoom>
+  // private _operateManage: ReturnType<typeof getUndoManager>
+  // private _shortCutManage: ReturnType<typeof getSortCutManager>
   private _pending: number
-  private _header: Header
+  // private _header: Header
 
   constructor(dom: HTMLDivElement, id: string, pending = defaultPending) {
     this._id = id
@@ -29,18 +25,18 @@ export class Workspace {
     dom.className = `${dom.className} ps-container`
     this._dom = dom
 
-    this._header = new Header(this._id, this._createDom('ps-header'))
+    // this._header = new Header(this._id, this._createDom('ps-header'))
+    new Header(this._id, this._createDom('ps-header'))
     this._content = this._createDom('ps-content')
     const preview = this._createDom('ps-preview-canvas', true, this._content)
     this._preview = new Canvas(this._id, preview, 'preview', this._pending)
     const operate = this._createDom('ps-operate-canvas', true, this._content)
     this._operate = new Canvas(this._id, operate, 'operate', this._pending)
 
-    this._zoom = getZoom(this._id, this._createAbsoluteDom())
-
-    this._operateManage = getUndoManager(this._id)
-    this._shortCutManage = getSortCutManager({}).bindDom(id, dom)
-
+    // this._operateManage = getUndoManager(this._id)
+    // this._shortCutManage = getSortCutManager({}).bindDom(id, dom)
+    getUndoManager(this._id)
+    getSortCutManager({}).bindDom(id, dom)
     this.setLayout('lr')
   }
 

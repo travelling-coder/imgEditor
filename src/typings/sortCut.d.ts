@@ -6,7 +6,7 @@ interface SortCutBase {
   ctrl?: boolean
   shift?: boolean
   alt?: boolean
-  key: 'left' | 'right' | 'wheel' | 'wheel-up' | 'wheel-down' | string
+  key: 'left' | 'right' | 'wheel' | 'wheel-up' | 'wheel-down' | 'contextmenu' | string
 }
 
 interface KeyboardSortCut extends SortCutBase {

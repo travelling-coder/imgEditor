@@ -8,6 +8,8 @@ interface HeaderSliderParams {
   eventKey: string
   showLabel: boolean
   title: string
+  format?: (value: number) => number
+  parse?: (value: number) => number
 }
 
 export class HeaderSlider {
@@ -22,7 +24,13 @@ export class HeaderSlider {
     parent: HTMLDivElement,
     private _config: HeaderSliderParams
   ) {
-    this._slider = new Slider(this._id, this._value, this.onChange.bind(this))
+    this._slider = new Slider(
+      this._id,
+      this._value,
+      this.onChange.bind(this),
+      _config.format,
+      _config.parse
+    )
 
     const titleDom = createSpan({ content: _config.title, className: 'ps-toolbar-title' })
     if (this._config.showLabel) {
@@ -54,13 +62,19 @@ export class HeaderSlider {
     return Math.min(Math.ceil((Date.now() - this._firstEventTime) / 500) || 1, 10)
   }
 
+  parse(val: number) {
+    return this._config.parse ? this._config.parse(val) : val
+  }
+
   in() {
-    const value = clamp(this._value + this.getStep(), 0, 100)
+    const value = clamp(this.parse(this._value) + this.getStep(), 0, 100)
+    console.log(value)
+
     this._slider.updateValue(value)
   }
 
   out() {
-    const value = clamp(this._value - this.getStep(), 0, 100)
+    const value = clamp(this.parse(this._value) - this.getStep(), 0, 100)
     this._slider.updateValue(value)
   }
 

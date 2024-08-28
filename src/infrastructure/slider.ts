@@ -13,7 +13,9 @@ export class Slider {
   constructor(
     private _id: string,
     public value: number,
-    private _onChange: (value: number) => void
+    private _onChange: (value: number) => void,
+    private _format?: (value: number) => number,
+    private _parse?: (value: number) => number
   ) {
     this._handler = createDiv({
       className: 'slider-handler'
@@ -26,12 +28,14 @@ export class Slider {
       className: 'slider-container',
       children: [this._bg]
     })
-    this._tooltip = new Tooltip(this._dom, value.toString(), {
+    this.value = this._parse ? this._parse(this.value) : this.value
+    this._tooltip = new Tooltip(this._dom, this.value.toString(), {
       withMouse: true,
-      position: 'bottom'
+      position: 'bottom',
+      format: this._format
     })
 
-    this.updateClassValue(value)
+    this.updateClassValue(this.value)
     this._handler.addEventListener('mouseenter', this.checkValue)
 
     polyMousemove(this._dom, {
@@ -60,8 +64,9 @@ export class Slider {
   }
 
   updateValue(value: number) {
+    if (value === this.value) return
     this.updateClassValue(value)
-    this._onChange(value)
+    this._onChange(this._format ? this._format(value) : value)
   }
 
   updateByEvent(event: MouseEvent) {

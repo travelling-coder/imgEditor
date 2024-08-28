@@ -85,6 +85,20 @@ const keyboardSortCuts: KeyboardSortCut[] = [
     callback: (event, id) => {
       console.log('c keyup', id)
     }
+  },
+  {
+    key: ' ',
+    type: 'keydown',
+    callback: (event, id) => {
+      messageHandler.emit(getSortCutMsgType('start-drag', id))
+    }
+  },
+  {
+    key: ' ',
+    type: 'keyup',
+    callback: (event, id) => {
+      messageHandler.emit(getSortCutMsgType('end-drag', id))
+    }
   }
 ]
 const mouseSortCuts: MouseSortCut[] = [
@@ -94,13 +108,12 @@ const mouseSortCuts: MouseSortCut[] = [
   //     console.log('left mouse dom', id)
   //   }
   // },
-  // {
-  //   key: 'left',
-  //   win: true,
-  //   callback: (event, id) => {
-  //     console.log('left mouse win', id)
-  //   }
-  // }
+  {
+    key: 'contextmenu',
+    callback: (event, id) => {
+      console.log('contextmenu dom', id)
+    }
+  }
 ]
 
 const wheelSortCuts: WheelSortCut[] = [

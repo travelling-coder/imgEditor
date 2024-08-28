@@ -3,9 +3,10 @@ import { debounce, preventDefault } from './helper'
 import { clamp } from './math'
 
 interface TooltipConfig {
-  position?: 'top' | 'bottom' | 'left' | 'right'
+  position?: 'top' | 'bottom'
   delay?: number
   withMouse?: boolean
+  format?: (value: number) => number
 }
 
 export class Tooltip {
@@ -13,6 +14,7 @@ export class Tooltip {
   private _timer: NodeJS.Timeout | null = null
   private _delay: number
   private _withMouse: boolean
+  private _format: ((value: number) => number) | undefined
 
   private _state = {
     enter: false,
@@ -22,11 +24,12 @@ export class Tooltip {
   constructor(
     private _dom: HTMLDivElement,
     private _content: string | HTMLElement,
-    _config: TooltipConfig = {}
+    config: TooltipConfig = {}
   ) {
-    const { position = 'top', delay = 0, withMouse } = _config
+    const { position = 'top', delay = 0, withMouse, format } = config
     this._withMouse = withMouse || false
     this._delay = delay
+    this._format = format
 
     this._tooltip = createDiv({
       className: ['tooltip', `tooltip-${position}`],
@@ -80,8 +83,13 @@ export class Tooltip {
     this.refreshContent()
     if (this._withMouse && typeof content === 'string') {
       const percent = parseInt(content)
+      const value = this._format ? this._format(percent) : percent
+      this._content = value.toString()
       this._tooltip.style.left = `${clamp(percent, 0, 100)}%`
+    } else {
+      this._content = content
     }
+    this.refreshContent()
   }
 
   refreshContent() {
