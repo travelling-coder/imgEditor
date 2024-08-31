@@ -1,7 +1,7 @@
 import { Workspace } from './workspace'
 import getSortCutManager from './scheduler/sortCutManager'
 import messageHandler from '@/infrastructure/messageHandler'
-import { getSortCutMsgType } from '@/infrastructure/messageHandlerConstants'
+import { getMsgType, getSortCutMsgType } from '@/infrastructure/messageHandlerConstants'
 
 const keyboardSortCuts: KeyboardSortCut[] = [
   {
@@ -91,6 +91,7 @@ const keyboardSortCuts: KeyboardSortCut[] = [
     type: 'keydown',
     callback: (event, id) => {
       messageHandler.emit(getSortCutMsgType('start-drag', id))
+      messageHandler.emit(getMsgType('cursorLock', id))
     }
   },
   {
@@ -98,6 +99,7 @@ const keyboardSortCuts: KeyboardSortCut[] = [
     type: 'keyup',
     callback: (event, id) => {
       messageHandler.emit(getSortCutMsgType('end-drag', id))
+      messageHandler.emit(getMsgType('cursorUnlock', id))
     }
   }
 ]

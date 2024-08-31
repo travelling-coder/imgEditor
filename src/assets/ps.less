@@ -96,6 +96,7 @@
         background-position: 0 0, var(--half-background-shape-size) var(--half-background-shape-size);
 
         position: relative;
+        overflow: hidden;
     }
 
     .ps-rule {
@@ -282,4 +283,14 @@
 
 .no-select {
     user-select: none;
+}
+
+.global-cursor {
+    z-index: 9999;
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    position: absolute;
+    top: 0;
+    left: 0;
 }

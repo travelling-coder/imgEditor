@@ -19,7 +19,12 @@ const messageHandlerConstants = {
 
   opacityChange: 'opacity-change',
   opacityIn: 'opacity-in',
-  opacityOut: 'opacity-out'
+  opacityOut: 'opacity-out',
+
+  cursorPosition: 'cursor-position',
+  cursorHide: 'cursor-hide',
+  cursorLock: 'cursor-lock',
+  cursorUnlock: 'cursor-unlock'
 }
 
 export const getMsgType = (key: keyof typeof messageHandlerConstants | string, id?: string) => {

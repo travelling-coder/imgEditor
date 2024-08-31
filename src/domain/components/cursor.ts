@@ -9,23 +9,36 @@ interface Config {
   opacity: number
 }
 
+const defaultConfig: Config = {
+  color: 'blue',
+  radius: 10,
+  hardness: 0,
+  opacity: 100
+}
+
 export default class Cursor {
   private _point: Position = { x: 0, y: 0 }
   private _type: ToolbarType | undefined
-  private _cacheConfig: Map<ToolbarType, Config> = new Map()
+  private _cacheConfig: Map<ToolbarType, Config> = new Map([])
   private _dom: HTMLDivElement
+  private _lock = false
+  private _cursor: HTMLImageElement = new Image()
 
   constructor(
     private _id: string,
     private _parent: HTMLDivElement,
     private _config: Config
   ) {
-    this._dom = createDiv({ className: 'global-cursor' })
-    _parent.appendChild(this._dom)
+    _parent.appendChild((this._dom = createDiv({ className: 'global-cursor' })))
+    _parent.addEventListener('mousemove', this.onMousemove.bind(this))
     messageHandler.on(getMsgType('hardnessChange', this._id), this.updateHardness.bind(this))
     messageHandler.on(getMsgType('radiusChange', this._id), this.updateRadius.bind(this))
     messageHandler.on(getMsgType('opacityChange', this._id), this.updateOpacity.bind(this))
     messageHandler.on(getMsgType('colorChange', this._id), this.updateColor.bind(this))
+    messageHandler.on(getMsgType('cursorPosition', this._id), this.updateCursorPosition.bind(this))
+    messageHandler.on(getMsgType('cursorHide', this._id), this.hideCursor.bind(this))
+    messageHandler.on(getMsgType('cursorLock', this._id), this.onLock.bind(this))
+    messageHandler.on(getMsgType('cursorUnlock', this._id), this.onUnlock.bind(this))
   }
 
   updateType(type: ToolbarType) {
@@ -54,10 +67,42 @@ export default class Cursor {
     this.updateConfig()
   }
 
+  onMousemove(e: MouseEvent) {
+    var rect = this._parent.getBoundingClientRect()
+    var x = e.clientX - rect.left // 鼠标相对于目标元素的X坐标
+    var y = e.clientY - rect.top // 鼠标相对于目标元素的Y坐标
+    if ((e.target as HTMLElement).closest('.ps-rule')) {
+      messageHandler.emit(getMsgType('cursorHide', this._id))
+    } else {
+      messageHandler.emit(getMsgType('cursorPosition', this._id), { x, y })
+    }
+  }
+
+  onLock() {
+    this._dom.style.display = 'none'
+    this._lock = true
+  }
+
+  onUnlock() {
+    this._dom.style.display = 'block'
+    this._lock = false
+  }
+
+  hideCursor() {
+    this._dom.style.display = 'none'
+  }
+
   updateCursorPosition(p: Position) {
-    this._point = p
-    this._dom.style.left = `${p.x}px`
-    this._dom.style.top = `${p.y}px`
+    try {
+      if (this._dom.style.display === 'none' && !this._lock) {
+        this._dom.style.display = 'block'
+      }
+      this._point = p
+      this._dom.style.left = `${p.x}px`
+      this._dom.style.top = `${p.y}px`
+    } catch {
+      // ignore
+    }
   }
 
   updateConfig() {
