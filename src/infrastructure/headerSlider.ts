@@ -68,8 +68,6 @@ export class HeaderSlider {
 
   in() {
     const value = clamp(this.parse(this._value) + this.getStep(), 0, 100)
-    console.log(value)
-
     this._slider.updateValue(value)
   }
 
