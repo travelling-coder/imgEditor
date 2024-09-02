@@ -27,13 +27,16 @@ export default class Cursor {
   private _dom: HTMLDivElement
   private _lock = false
   private _cursor: HTMLImageElement = new Image()
+  private _canvas = document.createElement('canvas')
 
   constructor(
     private _id: string,
     private _parent: HTMLDivElement,
     private _config: Config
   ) {
-    _parent.appendChild((this._dom = createDiv({ className: 'global-cursor' })))
+    _parent.appendChild(
+      (this._dom = createDiv({ className: 'global-cursor', children: [this._cursor] }))
+    )
     _parent.addEventListener('mousemove', this.onMousemove.bind(this))
 
     messageHandler
@@ -132,7 +135,41 @@ export default class Cursor {
     }
   }
 
+  getGradient(ctx: CanvasRenderingContext2D) {
+    const { radius, hardness, opacity, color } = this._config
+    const gradient = ctx.createRadialGradient(radius, radius, 0, radius, radius, radius)
+    gradient.addColorStop(0, `rgba(0, 0, 255, ${opacity / 100})`)
+    gradient.addColorStop(Math.pow(hardness / 100, 1.2), `rgba(0, 0, 255, ${opacity / 100})`)
+    gradient.addColorStop(1, 'transparent')
+
+    return gradient
+  }
+
+  fillArc(ctx: CanvasRenderingContext2D) {
+    const { radius } = this._config
+    ctx.beginPath()
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)'
+    ctx.arc(radius, radius, radius, 0, Math.PI * 2)
+    ctx.stroke()
+  }
+
+  drawCursor() {
+    if (this.shouldShowCursor()) {
+      const ctx = this._canvas.getContext('2d')!
+      const { radius } = this._config
+      this._canvas.width = radius * 2
+      this._canvas.height = radius * 2
+
+      const gradient = this.getGradient(ctx)
+      this.fillArc(ctx)
+      ctx.fillStyle = gradient
+      ctx.fill()
+      this._cursor.src = this._canvas.toDataURL()
+    }
+  }
+
   updateConfig() {
+    this.drawCursor()
     switch (this._type) {
       case 'easer':
         break
