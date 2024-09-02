@@ -1,9 +1,10 @@
 import { createDiv } from '@/infrastructure/createDom'
 import getToolBar from './components/toolbar'
 import messageHandler from '@/infrastructure/messageHandler'
-import { getSortCutMsgType } from '@/infrastructure/messageHandlerConstants'
+import { getMsgType, getSortCutMsgType } from '@/infrastructure/messageHandlerConstants'
 import getZoom from './components/zoom'
 import { HeaderSlider } from '@/infrastructure/headerSlider'
+import { showCursorToolbarType } from './constants'
 
 export default class Header {
   private _toolbar: ReturnType<typeof getToolBar>
@@ -49,13 +50,23 @@ export default class Header {
     const hardness = this._hardness
     const opacity = this._opacity
 
-    messageHandler.on(getSortCutMsgType('radiusIn', this._id), radius.in.bind(radius))
-    messageHandler.on(getSortCutMsgType('radiusOut', this._id), radius.out.bind(radius))
+    messageHandler
+      .on(getSortCutMsgType('radiusIn', this._id), radius.in.bind(radius))
+      .on(getSortCutMsgType('radiusOut', this._id), radius.out.bind(radius))
+      .on(getSortCutMsgType('hardnessIn', this._id), hardness.in.bind(hardness))
+      .on(getSortCutMsgType('hardnessOut', this._id), hardness.out.bind(hardness))
+      .on(getSortCutMsgType('opacityIn', this._id), opacity.in.bind(opacity))
+      .on(getSortCutMsgType('opacityOut', this._id), opacity.out.bind(opacity))
+      .on(getMsgType('toolbarType', this._id), this.updateType.bind(this))
+  }
 
-    messageHandler.on(getSortCutMsgType('hardnessIn', this._id), hardness.in.bind(hardness))
-    messageHandler.on(getSortCutMsgType('hardnessOut', this._id), hardness.out.bind(hardness))
+  updateType(type: ToolbarType) {
+    const toolbars = [this._radius, this._hardness, this._opacity]
 
-    messageHandler.on(getSortCutMsgType('opacityIn', this._id), opacity.in.bind(opacity))
-    messageHandler.on(getSortCutMsgType('opacityOut', this._id), opacity.out.bind(opacity))
+    if (showCursorToolbarType.includes(type)) {
+      toolbars.forEach((item) => item.show())
+    } else {
+      toolbars.forEach((item) => item.hide())
+    }
   }
 }

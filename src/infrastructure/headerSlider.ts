@@ -17,6 +17,8 @@ export class HeaderSlider {
   private _label: HTMLSpanElement | null = null
   private _firstEventTime: number = 0
   private _firstEventTimer: NodeJS.Timeout | null = null
+  private _dom: HTMLDivElement
+  private _displayState: boolean = true
 
   constructor(
     private _id: string,
@@ -41,11 +43,13 @@ export class HeaderSlider {
     }
     const sliderDom = this._slider.getDom()
     parent.appendChild(
-      createDiv({
-        className: ['ps-toolbar-item', 'ps-toolbar-radius'],
+      (this._dom = createDiv({
+        className: ['ps-toolbar-item'],
         children: this._label ? [titleDom, this._label, sliderDom] : [titleDom, sliderDom]
-      })
+      }))
     )
+
+    messageHandler.on(`init-${getMsgType(this._config.eventKey, this._id)}`, this.init.bind(this))
   }
 
   getStep() {
@@ -66,6 +70,10 @@ export class HeaderSlider {
     return this._config.parse ? this._config.parse(val) : val
   }
 
+  init(value: number) {
+    this._slider.updateValue(clamp(this.parse(value), 0, 100))
+  }
+
   in() {
     const value = clamp(this.parse(this._value) + this.getStep(), 0, 100)
     this._slider.updateValue(value)
@@ -82,7 +90,21 @@ export class HeaderSlider {
     messageHandler.emit(getMsgType(this._config.eventKey, this._id), value)
   }
 
-  getDom() {
+  getSliderDom() {
     return this._slider.getDom()
+  }
+
+  hide() {
+    if (this._displayState) {
+      this._displayState = false
+      this._dom.style.display = 'none'
+    }
+  }
+
+  show() {
+    if (!this._displayState) {
+      this._displayState = true
+      this._dom.style.display = 'block'
+    }
   }
 }

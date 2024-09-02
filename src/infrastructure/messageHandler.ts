@@ -27,6 +27,7 @@ class MessageHandler {
     const callbacks: MessageHandlerItem[] = map.get(key) || []
     callbacks.push({ key, callback })
     map.set(key, callbacks)
+    return this
   }
 
   once(key: string, callback: Function, isMessage: boolean = false) {
@@ -34,6 +35,7 @@ class MessageHandler {
     const callbacks: MessageHandlerItem[] = map.get(key) || []
     callbacks.push({ key, callback, once: true })
     map.set(key, callbacks)
+    return this
   }
 
   off(key: string, callback?: Function, isMessage: boolean = false) {
@@ -45,6 +47,7 @@ class MessageHandler {
     } else {
       map.delete(key)
     }
+    return this
   }
 
   emit(key: string, data?: any, isMessage: boolean = false) {
@@ -54,6 +57,7 @@ class MessageHandler {
     } else {
       this.exec(key, data)
     }
+    return this
   }
 
   destroy() {

@@ -1,4 +1,4 @@
-type ToolbarType = 'redo' | 'undo' | 'pen' | 'pencil' | 'easer'
+type ToolbarType = 'redo' | 'undo' | 'pen' | 'brush' | 'easer' | 'grab'
 
 interface ToolbarOptions {
   type: ToolbarType

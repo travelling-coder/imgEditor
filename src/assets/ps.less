@@ -1,3 +1,5 @@
+@import url(./root.less);
+
 .base-container {
     padding: 4px 0;
     border-radius: 8px;
@@ -104,6 +106,7 @@
         top: 0;
         left: 0;
         background-color: white;
+        z-index: var(--rule-index);
 
         &.ps-rule-v {
             cursor: ew-resize;
@@ -293,4 +296,7 @@
     position: absolute;
     top: 0;
     left: 0;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    z-index: var(--cursor-index);
 }

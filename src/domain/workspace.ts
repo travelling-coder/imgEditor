@@ -14,8 +14,6 @@ export class Workspace {
   private _preview: Canvas
   private _operate: Canvas
   private _id: string
-  // private _operateManage: ReturnType<typeof getUndoManager>
-  // private _shortCutManage: ReturnType<typeof getSortCutManager>
   private _pending: number
   // private _header: Header
 
@@ -28,13 +26,19 @@ export class Workspace {
     // this._header = new Header(this._id, this._createDom('ps-header'))
     new Header(this._id, this._createDom('ps-header'))
     this._content = this._createDom('ps-content')
-    const preview = this._createDom('ps-preview-canvas', true, this._content)
-    this._preview = new Canvas(this._id, preview, 'preview', this._pending)
-    const operate = this._createDom('ps-operate-canvas', true, this._content)
-    this._operate = new Canvas(this._id, operate, 'operate', this._pending)
+    this._preview = new Canvas(
+      this._id,
+      this._createDom('ps-preview-canvas', true, this._content),
+      'preview',
+      this._pending
+    )
+    // this._operate = new Canvas(
+    //   this._id,
+    //   this._createDom('ps-operate-canvas', true, this._content),
+    //   'operate',
+    //   this._pending
+    // )
 
-    // this._operateManage = getUndoManager(this._id)
-    // this._shortCutManage = getSortCutManager({}).bindDom(id, dom)
     getUndoManager(this._id)
     getSortCutManager({}).bindDom(id, dom)
     this.setLayout('lr')

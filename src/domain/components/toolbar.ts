@@ -1,5 +1,6 @@
 import { createDiv, createSvg } from '@/infrastructure/createDom'
 import messageHandler from '@/infrastructure/messageHandler'
+import { getMsgType, getSortCutMsgType } from '@/infrastructure/messageHandlerConstants'
 import { getInstance } from '@/infrastructure/singleton'
 
 const defaultConfig: ToolbarOptions[] = [
@@ -16,9 +17,9 @@ const defaultConfig: ToolbarOptions[] = [
     unActiveAble: true
   },
   {
-    type: 'pencil',
-    icon: 'pencil',
-    title: 'pencil'
+    type: 'brush',
+    icon: 'brush',
+    title: 'brush'
   },
   {
     type: 'pen',
@@ -29,6 +30,11 @@ const defaultConfig: ToolbarOptions[] = [
     type: 'easer',
     icon: 'easer',
     title: 'easer'
+  },
+  {
+    type: 'grab',
+    icon: 'grab',
+    title: 'handle'
   }
 ]
 
@@ -61,6 +67,7 @@ class Toolbar {
   init() {
     this.initDom()
     this.initOptions()
+    messageHandler.on(getSortCutMsgType('toolbarType', this._id), this.pick.bind(this))
   }
 
   initDom() {
@@ -99,6 +106,8 @@ class Toolbar {
     this._activeOption && this._domMap.get(this._activeOption)?.classList.remove('active')
     this._activeOption = type
     this._domMap.get(type)?.classList.add('active')
+
+    messageHandler.emit(getMsgType('toolbarType', this._id), type)
   }
 
   emitToolbarEvent(type: ToolbarType) {

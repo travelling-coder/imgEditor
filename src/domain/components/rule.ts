@@ -56,7 +56,7 @@ export class Rule {
     dom.appendChild(this._ruleH)
     dom.appendChild(this._ruleV)
     dom.appendChild(this._ruleM)
-    this._helper = new HelpLineManager(this._ruleC, this)
+    this._helper = new HelpLineManager(this._ruleC, this, id)
     this._ruleM.appendChild(this._ruleC)
     this._id = id
 

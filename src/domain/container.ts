@@ -5,102 +5,103 @@ import { getMsgType, getSortCutMsgType } from '@/infrastructure/messageHandlerCo
 
 const keyboardSortCuts: KeyboardSortCut[] = [
   {
-    key: 'c',
+    key: 'b',
     type: 'keydown',
-    callback: (event, id) => {
-      console.log('c down', id)
-    }
+    callback: (event, id) => messageHandler.emit(getSortCutMsgType('toolbarType', id), 'brush')
+  },
+  {
+    key: 'p',
+    type: 'keydown',
+    callback: (event, id) => messageHandler.emit(getSortCutMsgType('toolbarType', id), 'pen')
+  },
+  {
+    key: 'h',
+    type: 'keydown',
+    callback: (event, id) => messageHandler.emit(getSortCutMsgType('toolbarType', id), 'handle')
+  },
+  {
+    key: 'e',
+    type: 'keydown',
+    callback: (event, id) => messageHandler.emit(getSortCutMsgType('toolbarType', id), 'easer')
+  },
+  {
+    key: 'z',
+    type: 'keyup',
+    shift: true,
+    ctrl: true,
+    callback: (event, id) => messageHandler.emit(getSortCutMsgType('toolbarType', id), 'brush')
+  },
+  {
+    key: 'z',
+    type: 'keyup',
+    ctrl: true,
+    callback: (event, id) => messageHandler.emit(getSortCutMsgType('toolbarType', id), 'brush')
   },
   {
     key: '=',
     type: 'keydown',
-    callback: (event, id) => {
-      messageHandler.emit(getSortCutMsgType('hardnessIn', id))
-    }
+    callback: (event, id) => messageHandler.emit(getSortCutMsgType('hardnessIn', id))
   },
   {
     key: '=',
     ctrl: true,
     type: 'keydown',
-    callback: (event, id) => {
-      messageHandler.emit(getSortCutMsgType('zoomIn', id))
-    }
+    callback: (event, id) => messageHandler.emit(getSortCutMsgType('zoomIn', id))
   },
   {
     key: '0',
     ctrl: true,
     type: 'keydown',
-    callback: (event, id) => {
-      messageHandler.emit(getSortCutMsgType('zoomReset', id))
-    }
+    callback: (event, id) => messageHandler.emit(getSortCutMsgType('zoomReset', id))
   },
   {
     key: '-',
     type: 'keydown',
-    callback: (event, id) => {
-      messageHandler.emit(getSortCutMsgType('hardnessOut', id))
-    }
+    callback: (event, id) => messageHandler.emit(getSortCutMsgType('hardnessOut', id))
   },
   {
     key: '-',
     ctrl: true,
     type: 'keydown',
-    callback: (event, id) => {
-      messageHandler.emit(getSortCutMsgType('zoomOut', id))
-    }
+    callback: (event, id) => messageHandler.emit(getSortCutMsgType('zoomOut', id))
   },
   {
     key: '[',
     type: 'keydown',
-    callback: (event, id) => {
-      messageHandler.emit(getSortCutMsgType('radiusOut', id))
-    }
+    callback: (event, id) => messageHandler.emit(getSortCutMsgType('radiusOut', id))
   },
   {
     key: ']',
     type: 'keydown',
-    callback: (event, id) => {
-      messageHandler.emit(getSortCutMsgType('radiusIn', id))
-    }
+    callback: (event, id) => messageHandler.emit(getSortCutMsgType('radiusIn', id))
   },
   {
     key: '[',
     ctrl: true,
     type: 'keydown',
-    callback: (event, id) => {
-      messageHandler.emit(getSortCutMsgType('opacityOut', id))
-    }
+    callback: (event, id) => messageHandler.emit(getSortCutMsgType('opacityOut', id))
   },
   {
     key: ']',
     ctrl: true,
     type: 'keydown',
-    callback: (event, id) => {
-      messageHandler.emit(getSortCutMsgType('opacityIn', id))
-    }
-  },
-  {
-    key: 'c',
-    type: 'keyup',
-    callback: (event, id) => {
-      console.log('c keyup', id)
-    }
+    callback: (event, id) => messageHandler.emit(getSortCutMsgType('opacityIn', id))
   },
   {
     key: ' ',
     type: 'keydown',
-    callback: (event, id) => {
-      messageHandler.emit(getSortCutMsgType('start-drag', id))
-      messageHandler.emit(getMsgType('cursorLock', id))
-    }
+    callback: (event, id) =>
+      messageHandler
+        .emit(getSortCutMsgType('start-drag', id))
+        .emit(getSortCutMsgType('cursorLock', id))
   },
   {
     key: ' ',
     type: 'keyup',
-    callback: (event, id) => {
-      messageHandler.emit(getSortCutMsgType('end-drag', id))
-      messageHandler.emit(getMsgType('cursorUnlock', id))
-    }
+    callback: (event, id) =>
+      messageHandler
+        .emit(getSortCutMsgType('end-drag', id))
+        .emit(getSortCutMsgType('cursorUnlock', id))
   }
 ]
 const mouseSortCuts: MouseSortCut[] = [

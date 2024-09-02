@@ -1,6 +1,8 @@
 import { createDiv } from '@/infrastructure/createDom'
 import polyMousemove from '@/infrastructure/polyMousemove'
 import type { Rule } from './rule'
+import messageHandler from '@/infrastructure/messageHandler'
+import { getMsgType } from '@/infrastructure/messageHandlerConstants'
 
 export class HelpLineManager {
   parentRule: Rule
@@ -9,7 +11,11 @@ export class HelpLineManager {
   private _infos: HTMLDivElement
   lines: Record<string, { dom: HTMLDivElement; type: 'h' | 'v'; id: string }> = {}
 
-  constructor(dom: HTMLDivElement, parent: Rule) {
+  constructor(
+    dom: HTMLDivElement,
+    parent: Rule,
+    private _id: string
+  ) {
     this.parentDom = dom
     this._infos = createDiv({
       className: 'help-line-infos'
@@ -70,6 +76,7 @@ export class HelpLineManager {
   mousedown(type: 'h' | 'v') {
     document.body.style.cursor = type === 'h' ? 'ns-resize' : 'ew-resize'
     this._infos.style.display = 'block'
+    messageHandler.emit(getMsgType('cursorLock', this._id))
   }
 
   getTarget(e: MouseEvent) {
@@ -95,6 +102,7 @@ export class HelpLineManager {
     ) {
       this.removeLine(id)
     }
+    messageHandler.emit(getMsgType('cursorUnlock', this._id))
     document.body.style.cursor = 'unset'
     this._infos.style.display = 'none'
   }

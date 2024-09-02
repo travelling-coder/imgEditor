@@ -24,7 +24,9 @@ const messageHandlerConstants = {
   cursorPosition: 'cursor-position',
   cursorHide: 'cursor-hide',
   cursorLock: 'cursor-lock',
-  cursorUnlock: 'cursor-unlock'
+  cursorUnlock: 'cursor-unlock',
+
+  toolbarType: 'toolbar-type'
 }
 
 export const getMsgType = (key: keyof typeof messageHandlerConstants | string, id?: string) => {
