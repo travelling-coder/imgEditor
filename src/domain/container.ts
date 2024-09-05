@@ -17,7 +17,7 @@ const keyboardSortCuts: KeyboardSortCut[] = [
   {
     key: 'h',
     type: 'keydown',
-    callback: (event, id) => messageHandler.emit(getSortCutMsgType('toolbarType', id), 'handle')
+    callback: (event, id) => messageHandler.emit(getSortCutMsgType('toolbarType', id), 'grab')
   },
   {
     key: 'e',

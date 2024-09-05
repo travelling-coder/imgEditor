@@ -1,7 +1,9 @@
-import { createDiv } from '@/infrastructure/createDom'
+import { createDiv, createSvg } from '@/infrastructure/createDom'
 import messageHandler from '@/infrastructure/messageHandler'
 import { getMsgType, getSortCutMsgType } from '@/infrastructure/messageHandlerConstants'
 import { showCursorToolbarType } from '../constants'
+import globalConfig from '../store/globalConfig'
+import ColorConverter from '@/infrastructure/colorConverter'
 
 interface Config {
   color: string
@@ -11,7 +13,7 @@ interface Config {
 }
 
 const defaultConfig: Config = {
-  color: 'blue',
+  color: '#69f7f9',
   radius: 10,
   hardness: 0,
   opacity: 100
@@ -74,6 +76,7 @@ export default class Cursor {
     } else {
       this._dom.style.display = 'none'
     }
+    this.drawIcon()
     this.updateConfig()
   }
 
@@ -136,10 +139,11 @@ export default class Cursor {
   }
 
   getGradient(ctx: CanvasRenderingContext2D) {
+    const { r, g, b } = ColorConverter.hexToRgb(this._config.color) || { r: 0, g: 0, b: 255 }
     const { radius, hardness, opacity, color } = this._config
     const gradient = ctx.createRadialGradient(radius, radius, 0, radius, radius, radius)
-    gradient.addColorStop(0, `rgba(0, 0, 255, ${opacity / 100})`)
-    gradient.addColorStop(Math.pow(hardness / 100, 1.2), `rgba(0, 0, 255, ${opacity / 100})`)
+    gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${opacity / 100})`)
+    gradient.addColorStop(Math.pow(hardness / 100, 1.2), `rgba(${r}, ${g}, ${b}, ${opacity / 100})`)
     gradient.addColorStop(1, 'transparent')
 
     return gradient
@@ -153,12 +157,34 @@ export default class Cursor {
     ctx.stroke()
   }
 
+  drawIcon() {
+    if (this._type === 'grab') {
+      this._parent.style.cursor = 'grab'
+    } else {
+      const iconUrl = `${globalConfig.basicIconUrl}${this._type}.svg`
+      createSvg(iconUrl).then((svg) => {
+        const dom = svg.cloneNode(true)
+        dom.setAttribute('width', '20')
+        dom.setAttribute('height', '20')
+        dom.style.color = '#000'
+        const url = `data:image/svg+xml;base64,${btoa(new XMLSerializer().serializeToString(dom))}`
+        this._parent.style.cursor = `url(${url}) 10 ${this._type === 'pen' ? 20 : 10}, auto`
+      })
+    }
+  }
+
   drawCursor() {
     if (this.shouldShowCursor()) {
       const ctx = this._canvas.getContext('2d')!
       const { radius } = this._config
       this._canvas.width = radius * 2
       this._canvas.height = radius * 2
+
+      if (radius > 20) {
+        this._parent.classList.remove('hide-course')
+      } else {
+        this._parent.classList.add('hide-course')
+      }
 
       const gradient = this.getGradient(ctx)
       this.fillArc(ctx)

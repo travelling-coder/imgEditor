@@ -66,6 +66,7 @@ export class Canvas {
     if (this._dragging === start) {
       return
     } else if (start) {
+      this._dom.classList.add('no-course')
       document.body.classList.add('dragable')
       this._dragEndCb = polyMousemove(this._canvas, {
         onDown: (e) => {
@@ -79,6 +80,7 @@ export class Canvas {
         }
       })
     } else {
+      this._dom.classList.remove('no-course')
       document.body.classList.remove('dragable')
       this._dragEndCb?.()
     }

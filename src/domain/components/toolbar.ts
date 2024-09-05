@@ -2,64 +2,23 @@ import { createDiv, createSvg } from '@/infrastructure/createDom'
 import messageHandler from '@/infrastructure/messageHandler'
 import { getMsgType, getSortCutMsgType } from '@/infrastructure/messageHandlerConstants'
 import { getInstance } from '@/infrastructure/singleton'
-
-const defaultConfig: ToolbarOptions[] = [
-  {
-    type: 'undo',
-    icon: 'undo',
-    title: 'Undo',
-    unActiveAble: true
-  },
-  {
-    type: 'redo',
-    icon: 'redo',
-    title: 'redo',
-    unActiveAble: true
-  },
-  {
-    type: 'brush',
-    icon: 'brush',
-    title: 'brush'
-  },
-  {
-    type: 'pen',
-    icon: 'pen',
-    title: 'pen'
-  },
-  {
-    type: 'easer',
-    icon: 'easer',
-    title: 'easer'
-  },
-  {
-    type: 'grab',
-    icon: 'grab',
-    title: 'handle'
-  }
-]
+import globalConfig from '../store/globalConfig'
 
 const localStorageToolbarKey = 'ps-toolbar-option'
 
 class Toolbar {
   private _dom: HTMLDivElement
-  private _basicIconUrl: string
   private _options: ToolbarOptions[]
   private _activeOption: string | null = null
   private _id: string
   private _domMap: Map<string, HTMLDivElement> = new Map()
 
-  constructor(
-    id: string,
-    dom: HTMLDivElement,
-    basicIconUrl: string = '../assets/icons/',
-    options: ToolbarOptions[] = defaultConfig
-  ) {
+  constructor(id: string, dom: HTMLDivElement) {
     this._id = id
     this._dom = dom
-    this._basicIconUrl = basicIconUrl
-    this._options = options.map((option) => ({
+    this._options = globalConfig.toolbars.map((option) => ({
       ...option,
-      icon: `${this._basicIconUrl}${option.icon}.svg`
+      icon: `${globalConfig.basicIconUrl}${option.icon}.svg`
     }))
     this.init()
   }

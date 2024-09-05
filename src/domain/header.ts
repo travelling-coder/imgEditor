@@ -30,10 +30,10 @@ export default class Header {
       eventKey: 'radiusChange',
       title: '半径',
       format(val) {
-        return val * 5 || 5
+        return Math.max(val * 2, 10)
       },
       parse(val) {
-        return val / 5
+        return val / 2
       }
     })
     this._opacity = new HeaderSlider(this._id, 0, header, {
