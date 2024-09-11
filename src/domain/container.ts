@@ -1,4 +1,4 @@
-import { Workspace } from './workspace'
+import { Workspace } from './workspace/workspace'
 import getSortCutManager from './scheduler/sortCutManager'
 import messageHandler from '@/infrastructure/messageHandler'
 import { getMsgType, getSortCutMsgType } from '@/infrastructure/messageHandlerConstants'

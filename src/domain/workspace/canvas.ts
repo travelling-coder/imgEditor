@@ -1,40 +1,38 @@
 import { createCanvas } from '@/infrastructure/createDom'
-import getRule from './components/rule'
+import getRule from '@/domain/components/rule'
 import messageHandler from '@/infrastructure/messageHandler'
 import polyMousemove from '@/infrastructure/polyMousemove'
-import { onMove, onDown, onUp } from './handler/drag'
+import { onMove, onDown, onUp } from '@/domain/handler/drag'
 import { getMsgType, getSortCutMsgType } from '@/infrastructure/messageHandlerConstants'
-import Cursor from './components/cursor'
+import Cursor from '@/domain/components/cursor'
+import type { DrawMap } from './drawMap'
 
 export class Canvas {
-  private _dom: HTMLDivElement
-
   private _canvas: HTMLCanvasElement
   private _ctx: CanvasRenderingContext2D
-  private _id: string
-  private _type: string
 
   private _rule: ReturnType<typeof getRule>
-  private _pending: number
   private _dragging: boolean = false
   private _dragEndCb: VoidFunction | null = null
   zoom: number = 100
   zeroPoint: Position = { x: 0, y: 0 }
-  img: HTMLImageElement | null = null
 
-  constructor(id: string, dom: HTMLDivElement, type: string, pending: number) {
-    dom.classList.add('ps-canvas-container')
-    this._pending = pending
-    this._type = type
-    this._dom = dom
-    this._id = id
+  constructor(
+    private _id: string,
+    private _dom: HTMLDivElement,
+    private _type: 'preview' | 'operate',
+    private _pending: number,
+    private _drawMap: DrawMap
+  ) {
+    _dom.classList.add('ps-canvas-container')
     this._canvas = createCanvas({
       style: { position: 'absolute', top: `${this._pending}px`, left: `${this._pending}px` }
     })
     this._ctx = this._canvas.getContext('2d')!
+    this._ctx.globalCompositeOperation = 'destination-over'
     this._dom.appendChild(this._canvas)
-    this._rule = getRule(`${id}`, this._dom, type, this._pending)
-    new Cursor(id, dom, { color: '', radius: 5, hardness: 0, opacity: 0 })
+    this._rule = getRule(`${_id}`, this._dom, _type, this._pending)
+    new Cursor(_id, _dom, { color: '', radius: 5, hardness: 0, opacity: 0 })
     setTimeout(this.initCanvas.bind(this))
   }
 
@@ -112,19 +110,59 @@ export class Canvas {
     this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height)
   }
 
-  drawImage() {
-    if (this.img) {
-      const { width, height } = this.img!
-      const { x, y } = this.zeroPoint
-      const scale = this.zoom / 100
-      this.clearCanvas()
-      this._ctx.drawImage(this.img!, x, y, width * scale, height * scale)
+  setCompositeOperation(init?: boolean) {
+    if (init) {
+      this._ctx.globalCompositeOperation = 'copy'
+      this._ctx.globalAlpha = 1
+    } else {
+      this._ctx.globalCompositeOperation =
+        this._type === 'operate' ? 'source-over' : 'destination-in'
+      this._ctx.globalAlpha = this._type === 'operate' ? 0.6 : 1
     }
   }
 
-  loadImg(img: HTMLImageElement) {
-    this.img = img
+  drawImage() {
+    if (this._drawMap?.source) {
+      const { source } = this._drawMap
+      this.setCompositeOperation(true)
+      const { width, height } = source!
+      const { x, y } = this.zeroPoint
+      const scale = this.zoom / 100
+      this.clearCanvas()
+      this._ctx.drawImage(source!, x, y, width * scale, height * scale)
+      this.drawMap()
+    }
+  }
+
+  loadImg() {
     this.drawImage()
+  }
+
+  drawMap() {
+    const canvas = this._drawMap.canvas
+    this.setCompositeOperation()
+    if (this._drawMap) {
+      switch (this._type) {
+        case 'preview':
+          this._ctx.drawImage(
+            canvas,
+            this.zeroPoint.x,
+            this.zeroPoint.y,
+            (canvas.width * this.zoom) / 100,
+            (canvas.height * this.zoom) / 100
+          )
+          break
+        case 'operate':
+          this._ctx.drawImage(
+            canvas,
+            this.zeroPoint.x,
+            this.zeroPoint.y,
+            (canvas.width * this.zoom) / 100,
+            (canvas.height * this.zoom) / 100
+          )
+          break
+      }
+    }
   }
 
   getSize() {

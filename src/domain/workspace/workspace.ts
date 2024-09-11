@@ -1,10 +1,11 @@
 import { Canvas } from './canvas'
-import getSortCutManager from './scheduler/sortCutManager'
-import getUndoManager from './scheduler/undoManager'
+import getSortCutManager from '@/domain/scheduler/sortCutManager'
+import getUndoManager from '@/domain/scheduler/undoManager'
 import { createDiv } from '@/infrastructure/createDom'
 import messageHandler from '@/infrastructure/messageHandler'
 import { getMsgType } from '@/infrastructure/messageHandlerConstants'
 import Header from './header'
+import { DrawMap } from './drawMap'
 
 const defaultPending = 20
 
@@ -15,7 +16,7 @@ export class Workspace {
   private _operate: Canvas
   private _id: string
   private _pending: number
-  // private _header: Header
+  private _drawMap: DrawMap
 
   constructor(dom: HTMLDivElement, id: string, pending = defaultPending) {
     this._id = id
@@ -23,21 +24,25 @@ export class Workspace {
     dom.className = `${dom.className} ps-container`
     this._dom = dom
 
-    // this._header = new Header(this._id, this._createDom('ps-header'))
+    this._drawMap = new DrawMap(this._id)
     new Header(this._id, this._createDom('ps-header'))
     this._content = this._createDom('ps-content')
+
+    this._operate = new Canvas(
+      this._id,
+      this._createDom('ps-operate-canvas', true, this._content),
+      'operate',
+      this._pending,
+      this._drawMap
+    )
+
     this._preview = new Canvas(
       this._id,
       this._createDom('ps-preview-canvas', true, this._content),
       'preview',
-      this._pending
+      this._pending,
+      this._drawMap
     )
-    // this._operate = new Canvas(
-    //   this._id,
-    //   this._createDom('ps-operate-canvas', true, this._content),
-    //   'operate',
-    //   this._pending
-    // )
 
     getUndoManager(this._id)
     getSortCutManager({}).bindDom(id, dom)
@@ -50,12 +55,6 @@ export class Workspace {
       style: withDefaultStyle ? { flex: '1', backgroundColor: 'white' } : {}
     })
     ;(dom || this._dom).appendChild(div)
-    return div
-  }
-
-  private _createAbsoluteDom = () => {
-    const div = createDiv({ style: { position: 'absolute' } })
-    this._dom.appendChild(div)
     return div
   }
 
@@ -106,13 +105,17 @@ export class Workspace {
       const y = Math.floor((canvasHeight - height * scale) / 2)
 
       messageHandler.emit(getMsgType('zoomInit', this._id), {
-        zoom: Math.floor(scale * 100),
-        zeroPoint: { x, y }
+        // zoom: Math.floor(scale * 100),
+        zoom: 200,
+        // zeroPoint: { x, y }
+        zeroPoint: { x: -300, y: -200 }
       })
-      messageHandler.emit(getMsgType('zeroPoint', this._id), { x, y })
+      // messageHandler.emit(getMsgType('zeroPoint', this._id), { x, y })
+      messageHandler.emit(getMsgType('zeroPoint', this._id), { x: -300, y: -200 })
 
-      this._preview.loadImg(img)
-      this._operate.loadImg(img)
+      this._drawMap.loadImg(img)
+      this._preview.loadImg()
+      this._operate.loadImg()
     }
   }
 }

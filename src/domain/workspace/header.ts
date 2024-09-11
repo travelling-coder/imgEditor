@@ -1,10 +1,10 @@
 import { createDiv } from '@/infrastructure/createDom'
-import getToolBar from './components/toolbar'
+import getToolBar from '@/domain/components/toolbar'
 import messageHandler from '@/infrastructure/messageHandler'
 import { getMsgType, getSortCutMsgType } from '@/infrastructure/messageHandlerConstants'
-import getZoom from './components/zoom'
+import getZoom from '@/domain/components/zoom'
 import { HeaderSlider } from '@/infrastructure/headerSlider'
-import { showCursorToolbarType } from './constants'
+import { showCursorToolbarType } from '@/domain/constants'
 
 export default class Header {
   private _toolbar: ReturnType<typeof getToolBar>
