@@ -76,7 +76,6 @@ export default class Cursor {
     } else {
       this._dom.style.display = 'none'
     }
-    this.drawIcon()
     this.updateConfig()
   }
 
@@ -158,19 +157,19 @@ export default class Cursor {
   }
 
   drawIcon() {
-    if (this._type === 'grab') {
-      this._parent.style.cursor = 'grab'
-    } else {
-      const iconUrl = `${globalConfig.basicIconUrl}${this._type}.svg`
-      createSvg(iconUrl).then((svg) => {
-        const dom = svg.cloneNode(true)
-        dom.setAttribute('width', '20')
-        dom.setAttribute('height', '20')
-        dom.style.color = '#000'
-        const url = `data:image/svg+xml;base64,${btoa(new XMLSerializer().serializeToString(dom))}`
-        this._parent.style.cursor = `url(${url}) 10 ${this._type === 'pen' ? 20 : 10}, auto`
-      })
-    }
+    // if (this._type === 'grab') {
+    //   this._parent.style.cursor = 'grab'
+    // } else {
+    const iconUrl = `${globalConfig.basicIconUrl}${this._type}.svg`
+    createSvg(iconUrl).then((svg) => {
+      const dom = svg.cloneNode(true)
+      dom.setAttribute('width', '20')
+      dom.setAttribute('height', '20')
+      dom.style.color = '#000'
+      const url = `data:image/svg+xml;base64,${btoa(new XMLSerializer().serializeToString(dom))}`
+      this._parent.style.cursor = `url(${url}) 10 ${this._type === 'pen' ? 20 : 10}, auto`
+    })
+    // }
   }
 
   drawCursor() {
@@ -196,6 +195,7 @@ export default class Cursor {
 
   updateConfig() {
     this.drawCursor()
+    this.drawIcon()
     switch (this._type) {
       case 'easer':
         break

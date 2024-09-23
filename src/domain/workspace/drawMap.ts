@@ -21,7 +21,7 @@ export class DrawMap {
         data[i] = 0
         data[i + 1] = 0
         data[i + 2] = 255
-        data[i + 3] = 100
+        // data[i + 3] = 100
       }
       this.ctx.putImageData(imageData, 0, 0)
       this.ctx.clearRect(0, 0, 100, 100)
