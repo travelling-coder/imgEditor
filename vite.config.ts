@@ -13,6 +13,17 @@ export default defineConfig({
     }
   },
   server: {
-    port: 8888
+    port: 8888,
+    host: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        rewrite(path) {
+          return path.replace(/^\/api/, '')
+        },
+        secure: false,
+        changeOrigin: true
+      }
+    }
   }
 })
